@@ -66,28 +66,17 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .avatar { border: 0; border-radius: 50%; background: #d9e8e6; color: #09181b; font-size: 11px; font-weight: 800; }
 
 .content { max-width: 1260px; margin: 0 auto; padding: 28px 32px 36px; }
-.hero { position: relative; min-height: 420px; overflow: hidden; border-radius: 16px; background: #16100b; isolation: isolate; box-shadow: 0 28px 74px rgba(0,0,0,.32); }
-.vintage-backdrop { position: absolute; inset: 0; z-index: -2; background: #16100b url('./assets/listening-room-v1.jpg') 64% center/cover no-repeat; transform: scale(1.01); transition: transform 1.4s cubic-bezier(.16,1,.3,1); }
-.vintage-hero:hover .vintage-backdrop { transform: scale(1.035); }
-.vintage-hero::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg,rgba(10,8,6,.94) 0%,rgba(10,8,6,.78) 35%,rgba(10,8,6,.18) 72%,rgba(10,8,6,.08) 100%); pointer-events: none; }
-.vintage-copy { width: min(54%,520px); padding: 54px 0 112px 54px; }
-.vintage-copy h1 { margin: 0; color: #f6eee2; font-family: "Noto Sans SC", sans-serif; font-size: clamp(42px,4vw,58px); line-height: 1.04; letter-spacing: -.035em; }
-.vintage-copy p { margin: 18px 0 26px; color: rgba(244,226,203,.72); font-size: 14px; }
-.vintage-copy button { min-height: 46px; padding: 0 20px; border: 1px solid rgba(239,195,132,.42); border-radius: 10px; background: #b96f2e; color: #fff9ef; font-size: 12px; font-weight: 800; cursor: pointer; box-shadow: 0 12px 28px rgba(71,34,10,.28); transition: transform .18s ease, background .18s ease; }
-.vintage-copy button:hover { background: #d1843f; transform: translateY(-1px); }
-.hero-now-playing { position: absolute; left: 54px; bottom: 30px; z-index: 2; min-width: 0; max-width: calc(50% - 60px); display: flex; align-items: center; gap: 12px; }
-.hero-now-playing img { width: 54px; height: 54px; flex: 0 0 auto; border-radius: 9px; object-fit: cover; box-shadow: 0 12px 24px rgba(0,0,0,.34); }
-.hero-now-playing div { min-width: 0; }
-.hero-now-playing strong, .hero-now-playing span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.hero-now-playing strong { color: #fff7ed; font-size: 13px; }
-.hero-now-playing span { margin-top: 4px; color: rgba(244,226,203,.64); font-size: 10px; }
-.album-spectrum { position: absolute; right: 34px; bottom: 30px; width: min(32%,310px); height: 48px; display: flex; align-items: flex-end; gap: 4px; opacity: .82; }
-.album-spectrum i { flex: 1; height: var(--level,32%); border-radius: 2px 2px 1px 1px; background: #d99345; box-shadow: 0 0 10px rgba(216,139,60,.16); transform-origin: bottom; }
-.album-spectrum i:nth-child(6n+1) { --level: 20%; } .album-spectrum i:nth-child(6n+2) { --level: 48%; }
-.album-spectrum i:nth-child(6n+3) { --level: 82%; } .album-spectrum i:nth-child(6n+4) { --level: 36%; }
-.album-spectrum i:nth-child(6n+5) { --level: 66%; } .album-spectrum i:nth-child(6n) { --level: 28%; }
-.album-hero.is-playing .album-spectrum i { animation: albumBeat .8s cubic-bezier(.45,.05,.55,.95) infinite alternate; animation-delay: calc(var(--level) * -1s); }
-@keyframes albumBeat { from { transform: scaleY(.28); opacity: .36; } to { transform: scaleY(1); opacity: 1; } }
+.hero { position: relative; min-height: 388px; overflow: hidden; border-radius: 16px; background: #07090f; isolation: isolate; box-shadow: 0 28px 74px rgba(0,0,0,.32); }
+.light-hero::before { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 115%,rgba(83,68,209,.22),transparent 58%); pointer-events: none; }
+.light-hero::after { content: ""; position: absolute; left: 5%; right: 5%; bottom: 34px; height: 1px; background: rgba(164,241,236,.16); box-shadow: 0 12px 38px rgba(85,223,210,.1); pointer-events: none; }
+.light-stage { position: absolute; inset: 34px 5% 34px; display: flex; align-items: flex-end; justify-content: center; gap: clamp(6px,1vw,14px); }
+.light-stage i { flex: 1 1 0; min-width: 7px; max-width: 34px; height: 100%; border-radius: 9px 9px 3px 3px; background: #57ded2; opacity: .72; transform: scaleY(var(--rest,.18)); transform-origin: bottom; transition: transform .1s linear, opacity .18s ease; box-shadow: 0 0 12px rgba(87,222,210,.28), 0 0 36px rgba(87,222,210,.08); will-change: transform; }
+.light-stage i:nth-child(4n+2) { background: #7869f3; opacity: .62; box-shadow: 0 0 14px rgba(120,105,243,.28), 0 0 38px rgba(120,105,243,.08); }
+.light-stage i:nth-child(7n) { background: #e7f9f6; opacity: .92; box-shadow: 0 0 16px rgba(185,255,247,.42), 0 0 42px rgba(87,222,210,.14); }
+.light-stage i:nth-child(6n+1) { --rest: .12; } .light-stage i:nth-child(6n+2) { --rest: .24; }
+.light-stage i:nth-child(6n+3) { --rest: .42; } .light-stage i:nth-child(6n+4) { --rest: .2; }
+.light-stage i:nth-child(6n+5) { --rest: .34; } .light-stage i:nth-child(6n) { --rest: .16; }
+.light-hero.is-playing .light-stage i { opacity: .9; }
 .results-active .hero { display: none; }
 
 .section-block { margin-top: 38px; }
@@ -212,17 +201,10 @@ input[type="range"] { height: 3px; accent-color: var(--accent); cursor: pointer;
   .search-box #searchBtn span { display: none; }
   .search-box #searchBtn .icon { display: block; width: 17px; }
   .content { padding: 16px 14px 28px; }
-  .hero { min-height: 388px; border-radius: 14px; }
-  .vintage-backdrop { background-position: 69% center; }
-  .vintage-hero:hover .vintage-backdrop { transform: scale(1.01); }
-  .vintage-hero::after { background: linear-gradient(180deg,rgba(9,7,5,.5) 0%,rgba(9,7,5,.48) 38%,rgba(9,7,5,.96) 76%,rgba(9,7,5,1) 100%); }
-  .vintage-copy { width: 100%; padding: 34px 24px 128px; }
-  .vintage-copy h1 { max-width: none; font-size: 40px; }
-  .vintage-copy p { max-width: 250px; margin: 13px 0 20px; font-size: 12px; line-height: 1.6; }
-  .vintage-copy button { min-height: 44px; }
-  .hero-now-playing { left: 24px; right: 142px; bottom: 22px; max-width: none; }
-  .hero-now-playing img { width: 48px; height: 48px; }
-  .album-spectrum { right: 20px; bottom: 24px; width: 104px; height: 32px; gap: 3px; opacity: .9; }
+  .hero { min-height: 268px; border-radius: 14px; }
+  .light-stage { inset: 26px 18px 24px; gap: 5px; }
+  .light-stage i { min-width: 4px; border-radius: 5px 5px 2px 2px; }
+  .light-hero::after { left: 18px; right: 18px; bottom: 24px; }
   .section-block { margin-top: 30px; }
   .section-head { align-items: center; }
   .section-head h2 { font-size: 23px; }
