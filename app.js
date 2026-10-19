@@ -135,6 +135,7 @@ async function refreshRemoteTrack(track) {
 
 async function selectTrack(track, autoplay = true) {
   activeTrack = track;
+  updateAlbumHero(track);
   if (!playQueue.some(item => String(item.id) === String(track.id))) playQueue = visibleTracks.length ? visibleTracks : allTracks();
   currentIndex = Math.max(0, playQueue.findIndex(item => String(item.id) === String(track.id)));
   $('#playerTitle').textContent = track.title;
@@ -407,105 +408,27 @@ audio.addEventListener('error', () => {
   toast('这个音频资源暂时不可用，请换一个版本');
 });
 
-function initSignalField() {
-  const canvas = $('#signalCanvas');
-  const hero = canvas?.closest('.hero');
-  const stateLabel = $('#signalState');
-  if (!canvas || !hero) return;
-  const ctx = canvas.getContext('2d', {alpha:false});
-  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let width = 0, height = 0, dpr = 1, frame = 0, visible = true;
-  let pointerX = .5, pointerY = .5, targetX = .5, targetY = .5;
-
-  function resizeSignal() {
-    const rect = hero.getBoundingClientRect();
-    width = Math.max(1, rect.width); height = Math.max(1, rect.height);
-    dpr = Math.min(devicePixelRatio || 1, 2);
-    canvas.width = Math.round(width * dpr); canvas.height = Math.round(height * dpr);
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  }
-
-  function roundedLine(x, y1, y2, lineWidth, color, blur = 0) {
-    ctx.beginPath(); ctx.moveTo(x, y1); ctx.lineTo(x, y2);
-    ctx.lineWidth = lineWidth; ctx.lineCap = 'round'; ctx.strokeStyle = color;
-    ctx.shadowBlur = blur; ctx.shadowColor = color; ctx.stroke(); ctx.shadowBlur = 0;
-  }
-
-  function drawSignal(ms = 0) {
-    const t = ms * .001;
-    const energy = audio.paused ? .64 : 1.08;
-    pointerX += (targetX - pointerX) * .045; pointerY += (targetY - pointerY) * .045;
-    ctx.globalCompositeOperation = 'source-over';
-    ctx.fillStyle = '#07161d'; ctx.fillRect(0, 0, width, height);
-
-    const grid = width < 520 ? 40 : 52;
-    ctx.lineWidth = 1; ctx.strokeStyle = 'rgba(123,216,211,.035)';
-    ctx.beginPath();
-    for (let x = grid; x < width; x += grid) { ctx.moveTo(x+.5, 0); ctx.lineTo(x+.5, height); }
-    for (let y = grid; y < height; y += grid) { ctx.moveTo(0, y+.5); ctx.lineTo(width, y+.5); }
-    ctx.stroke();
-
-    const cx = width * (.5 + (pointerX - .5) * .045);
-    const cy = height * (.52 + (pointerY - .5) * .035);
-    const baseRadius = Math.min(width, height) * .19;
-    ctx.globalCompositeOperation = 'lighter';
-    for (let ring = 0; ring < 3; ring++) {
-      const r = baseRadius * (1 + ring * .58) + Math.sin(t * (.5 + ring*.09)) * 4;
-      ctx.beginPath();
-      ctx.arc(cx, cy, r, -Math.PI * (.92-ring*.08) + t*.035*(ring+1), Math.PI * (.2+ring*.2) + t*.035*(ring+1));
-      ctx.strokeStyle = `rgba(${ring===1?'121,100,255':'80,224,210'},${.19-ring*.035})`;
-      ctx.lineWidth = ring === 0 ? 1.5 : 1; ctx.stroke();
-    }
-
-    const count = width < 520 ? 41 : 73;
-    const margin = width < 520 ? 25 : 48;
-    const span = width - margin * 2;
-    for (let i = 0; i < count; i++) {
-      const n = i / (count - 1);
-      const x = margin + n * span;
-      const dist = Math.abs(n - .5) * 2;
-      const envelope = .22 + Math.pow(1 - dist, 1.7) * .7;
-      const waveA = (Math.sin(i * 1.91 + t * 2.2) + 1) * .5;
-      const waveB = (Math.sin(i * .43 - t * 1.35) + 1) * .5;
-      const beat = audio.paused ? .76 : .86 + .14 * Math.sin(t * 5.4 + i * .18);
-      const amp = (22 + height * .48 * envelope * (.36 + waveA*.42 + waveB*.22)) * energy * beat;
-      const lean = Math.sin(i*.31+t*.55) * 7 * (1-dist*.45);
-      const bright = i % 9 === 0 || i % 13 === 0;
-      const color = bright ? 'rgba(120,247,232,.92)' : i % 4 === 0 ? 'rgba(117,99,255,.48)' : 'rgba(76,205,195,.46)';
-      roundedLine(x + lean, cy - amp*.5, cy + amp*.5, bright ? 2.2 : 1.1, color, bright ? 10 : 0);
-      if (bright) roundedLine(x + lean, cy - amp*.22, cy + amp*.22, .8, 'rgba(226,255,251,.72)', 3);
-    }
-
-    ctx.beginPath();
-    for (let x = margin; x <= width-margin; x += 3) {
-      const n = (x-margin)/span;
-      const y = cy + Math.sin(n*28 + t*1.8)*5 + Math.sin(n*71-t*2.6)*2.2;
-      x === margin ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
-    }
-    ctx.strokeStyle = 'rgba(173,255,245,.42)'; ctx.lineWidth = .8; ctx.stroke();
-
-    ctx.fillStyle = 'rgba(209,255,249,.9)'; ctx.shadowBlur = 18; ctx.shadowColor = '#58e0d1';
-    ctx.beginPath(); ctx.arc(cx, cy, 2.2 + Math.sin(t*2)*.5, 0, Math.PI*2); ctx.fill(); ctx.shadowBlur = 0;
-    ctx.globalCompositeOperation = 'source-over';
-    if (!reduceMotion && visible) frame = requestAnimationFrame(drawSignal);
-  }
-
-  hero.addEventListener('pointermove', e => {
-    const r = hero.getBoundingClientRect(); targetX = (e.clientX-r.left)/r.width; targetY = (e.clientY-r.top)/r.height;
-  }, {passive:true});
-  hero.addEventListener('pointerleave', () => { targetX=.5; targetY=.5; });
-  new ResizeObserver(() => { resizeSignal(); if (reduceMotion) drawSignal(1600); }).observe(hero);
-  new IntersectionObserver(entries => {
-    visible = entries[0].isIntersecting;
-    if (visible && !reduceMotion && !frame) frame = requestAnimationFrame(drawSignal);
-    if (!visible && frame) { cancelAnimationFrame(frame); frame = 0; }
-  }).observe(hero);
-  const syncSignalState = () => {
-    hero.classList.toggle('is-playing', !audio.paused);
-    stateLabel.textContent = audio.paused ? 'STANDBY' : 'LIVE SIGNAL';
-  };
-  audio.addEventListener('play', syncSignalState); audio.addEventListener('pause', syncSignalState);
-  resizeSignal(); syncSignalState(); drawSignal(reduceMotion ? 1600 : 0);
+function updateAlbumHero(track) {
+  if (!track) return;
+  const cover = track.cover || './assets/orbit-cover-v2.jpg';
+  $('#heroCover').src = cover;
+  $('#heroCover').alt = `${track.title} 封面`;
+  $('#heroBackdrop').style.backgroundImage = `url("${String(cover).replaceAll('"','%22')}")`;
+  $('#heroTitle').textContent = track.title;
+  $('#heroArtist').textContent = `${track.artist} · ${track.album || '未知专辑'}`;
+  $('#heroSearchFocus').textContent = '换一首歌';
 }
 
-renderPlaylists(); renderTracks(); initSignalField();
+function initAlbumHero() {
+  const hero = $('.album-hero');
+  const syncMotion = () => hero?.classList.toggle('is-playing', !audio.paused);
+  $('#heroSearchFocus')?.addEventListener('click', () => {
+    $('#searchInput').focus();
+    $('#searchInput').scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'center'});
+  });
+  audio.addEventListener('play', syncMotion);
+  audio.addEventListener('pause', syncMotion);
+  syncMotion();
+}
+
+renderPlaylists(); renderTracks(); initAlbumHero();
