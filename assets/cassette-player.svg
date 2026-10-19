@@ -1,0 +1,173 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" preserveAspectRatio="xMidYMid slice" role="img" aria-labelledby="title desc">
+  <title id="title">复古磁带播放机矢量动效图稿</title>
+  <desc id="desc">深色金属卡座内装有一盒暖灰磁带，双卷带轮持续转动，两只电平表指针随节奏摆动。</desc>
+  <defs>
+    <linearGradient id="scene" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#080b0c"/>
+      <stop offset=".52" stop-color="#121514"/>
+      <stop offset="1" stop-color="#07090a"/>
+    </linearGradient>
+    <linearGradient id="face" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2a2d2d"/>
+      <stop offset=".48" stop-color="#181b1c"/>
+      <stop offset="1" stop-color="#101213"/>
+    </linearGradient>
+    <linearGradient id="edge" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#4b4d4b"/>
+      <stop offset=".28" stop-color="#202323"/>
+      <stop offset=".72" stop-color="#2b2e2d"/>
+      <stop offset="1" stop-color="#555754"/>
+    </linearGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1b2223"/>
+      <stop offset=".48" stop-color="#070b0d"/>
+      <stop offset="1" stop-color="#14191a"/>
+    </linearGradient>
+    <linearGradient id="cassette" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#d8d0bc"/>
+      <stop offset="1" stop-color="#9e9788"/>
+    </linearGradient>
+    <linearGradient id="meter" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ead9ab"/>
+      <stop offset="1" stop-color="#b59f72"/>
+    </linearGradient>
+    <radialGradient id="lamp">
+      <stop offset="0" stop-color="#d7fff8"/>
+      <stop offset=".28" stop-color="#68e5d7"/>
+      <stop offset="1" stop-color="#173c39"/>
+    </radialGradient>
+    <filter id="deviceShadow" x="-20%" y="-25%" width="140%" height="170%">
+      <feDropShadow dx="0" dy="24" stdDeviation="22" flood-color="#000" flood-opacity=".62"/>
+    </filter>
+    <filter id="softGlow" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="7"/>
+    </filter>
+    <clipPath id="doorClip"><rect x="326" y="126" width="548" height="244" rx="15"/></clipPath>
+  </defs>
+  <style>
+    .reel-left{transform-origin:492px 247px;animation:reel 2.1s linear infinite}
+    .reel-right{transform-origin:708px 247px;animation:reel 1.72s linear infinite}
+    .tape-flow{animation:tape 1.1s linear infinite}
+    .needle-left{transform-origin:212px 207px;animation:needleLeft .72s ease-in-out infinite alternate}
+    .needle-right{transform-origin:988px 207px;animation:needleRight .56s ease-in-out infinite alternate}
+    .pilot-glow{animation:glow 1.35s ease-in-out infinite alternate}
+    .reel-left,.reel-right,.tape-flow,.needle-left,.needle-right,.pilot-glow{animation-play-state:paused}
+    .is-playing .reel-left,.is-playing .reel-right,.is-playing .tape-flow,.is-playing .needle-left,.is-playing .needle-right,.is-playing .pilot-glow{animation-play-state:running}
+    @keyframes reel{to{transform:rotate(360deg)}}
+    @keyframes tape{to{stroke-dashoffset:-44}}
+    @keyframes needleLeft{0%{transform:rotate(-14deg)}35%{transform:rotate(7deg)}70%{transform:rotate(-4deg)}100%{transform:rotate(16deg)}}
+    @keyframes needleRight{0%{transform:rotate(-10deg)}32%{transform:rotate(15deg)}68%{transform:rotate(2deg)}100%{transform:rotate(20deg)}}
+    @keyframes glow{to{opacity:.38}}
+    @media (prefers-reduced-motion:reduce){.reel-left,.reel-right,.tape-flow,.needle-left,.needle-right,.pilot-glow{animation:none}}
+  </style>
+  <rect width="1200" height="520" fill="url(#scene)"/>
+  <ellipse cx="600" cy="453" rx="492" ry="32" fill="#000" opacity=".48"/>
+  <g filter="url(#deviceShadow)">
+    <rect x="78" y="42" width="1044" height="406" rx="28" fill="url(#edge)"/>
+    <rect x="88" y="52" width="1024" height="386" rx="21" fill="url(#face)" stroke="#666965" stroke-opacity=".34"/>
+    <path d="M106 73H1094" stroke="#858a86" stroke-opacity=".22"/>
+    <path d="M106 418H1094" stroke="#000" stroke-opacity=".68"/>
+
+    <g opacity=".76">
+      <circle cx="113" cy="77" r="5" fill="#080909" stroke="#767873"/>
+      <circle cx="1087" cy="77" r="5" fill="#080909" stroke="#767873"/>
+      <circle cx="113" cy="413" r="5" fill="#080909" stroke="#767873"/>
+      <circle cx="1087" cy="413" r="5" fill="#080909" stroke="#767873"/>
+    </g>
+
+    <g>
+      <rect x="134" y="112" width="156" height="126" rx="9" fill="#0c0e0e" stroke="#4a4d4a"/>
+      <rect x="147" y="127" width="130" height="88" rx="5" fill="url(#meter)"/>
+      <path d="M160 194Q212 150 264 194" fill="none" stroke="#2e2c27" stroke-width="2"/>
+      <g stroke="#4a4438" stroke-width="1.4">
+        <path d="M169 189l-4-8M184 177l-5-8M201 169l-2-9M220 167v-9M239 171l3-9M255 180l5-8"/>
+      </g>
+      <path class="needle-left" d="M212 207L247 167" stroke="#9f3e2b" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="212" cy="207" r="6" fill="#24221e"/>
+    </g>
+
+    <g>
+      <rect x="910" y="112" width="156" height="126" rx="9" fill="#0c0e0e" stroke="#4a4d4a"/>
+      <rect x="923" y="127" width="130" height="88" rx="5" fill="url(#meter)"/>
+      <path d="M936 194Q988 150 1040 194" fill="none" stroke="#2e2c27" stroke-width="2"/>
+      <g stroke="#4a4438" stroke-width="1.4">
+        <path d="M945 189l-4-8M960 177l-5-8M977 169l-2-9M996 167v-9M1015 171l3-9M1031 180l5-8"/>
+      </g>
+      <path class="needle-right" d="M988 207L1026 170" stroke="#9f3e2b" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="988" cy="207" r="6" fill="#24221e"/>
+    </g>
+
+    <rect x="302" y="99" width="596" height="296" rx="21" fill="#0a0c0d" stroke="#575c59" stroke-width="2"/>
+    <rect x="314" y="112" width="572" height="270" rx="17" fill="#15191a" stroke="#050607" stroke-width="5"/>
+    <rect x="326" y="126" width="548" height="244" rx="15" fill="url(#glass)"/>
+    <g clip-path="url(#doorClip)">
+      <path d="M350 130h350L440 370H326V154Z" fill="#fff" opacity=".045"/>
+      <path d="M770 126h106v204l-44 40H655Z" fill="#a6d8d1" opacity=".025"/>
+      <path d="M372 338C449 305 514 296 600 296s151 9 228 42" fill="none" stroke="#050606" stroke-width="42" opacity=".62"/>
+      <path class="tape-flow" d="M399 292C470 315 531 323 600 323s130-8 201-31" fill="none" stroke="#6d4f31" stroke-width="5" stroke-linecap="round" stroke-dasharray="24 20"/>
+
+      <g>
+        <path d="M388 177Q388 155 410 155H790Q812 155 812 177V318Q812 340 790 340H410Q388 340 388 318Z" fill="url(#cassette)" stroke="#ebe4d3" stroke-opacity=".45"/>
+        <path d="M421 188H779L760 278H440Z" fill="#2c2d2a" stroke="#777367"/>
+        <rect x="456" y="209" width="288" height="75" rx="36" fill="#171817" stroke="#77766e" stroke-width="2"/>
+        <path d="M447 306H753L729 336H471Z" fill="#777064" stroke="#d0c8b5" stroke-opacity=".45"/>
+        <g fill="#4f4c45" stroke="#e2dac8" stroke-opacity=".48">
+          <circle cx="413" cy="180" r="5"/><circle cx="787" cy="180" r="5"/>
+          <circle cx="413" cy="316" r="5"/><circle cx="787" cy="316" r="5"/>
+        </g>
+        <path d="M511 325h178" stroke="#262623" stroke-width="3" opacity=".7"/>
+      </g>
+
+      <g class="reel-left">
+        <circle cx="492" cy="247" r="48" fill="#d8d0bd" stroke="#242523" stroke-width="5"/>
+        <circle cx="492" cy="247" r="33" fill="#1a1b1a"/>
+        <g fill="#c8c0ae">
+          <path d="M487 216h10l4 19-9 5-9-5Z"/><path d="M487 278h10l4-19-9-5-9 5Z"/>
+          <path d="M461 242v10l19 4 5-9-5-9Z"/><path d="M523 242v10l-19 4-5-9 5-9Z"/>
+          <path d="M469 224l7-7 16 10-3 10-10 3Z"/><path d="M515 270l7-7-10-16-10 3-3 10Z"/>
+          <path d="M515 224l-7-7-16 10 3 10 10 3Z"/><path d="M469 270l-7-7 10-16 10 3 3 10Z"/>
+        </g>
+        <circle cx="492" cy="247" r="10" fill="#222321" stroke="#d8d0bd"/>
+      </g>
+
+      <g class="reel-right">
+        <circle cx="708" cy="247" r="48" fill="#d8d0bd" stroke="#242523" stroke-width="5"/>
+        <circle cx="708" cy="247" r="33" fill="#1a1b1a"/>
+        <g fill="#c8c0ae">
+          <path d="M703 216h10l4 19-9 5-9-5Z"/><path d="M703 278h10l4-19-9-5-9 5Z"/>
+          <path d="M677 242v10l19 4 5-9-5-9Z"/><path d="M739 242v10l-19 4-5-9 5-9Z"/>
+          <path d="M685 224l7-7 16 10-3 10-10 3Z"/><path d="M731 270l7-7-10-16-10 3-3 10Z"/>
+          <path d="M731 224l-7-7-16 10 3 10 10 3Z"/><path d="M685 270l-7-7 10-16 10 3 3 10Z"/>
+        </g>
+        <circle cx="708" cy="247" r="10" fill="#222321" stroke="#d8d0bd"/>
+      </g>
+    </g>
+
+    <path d="M326 126h548" stroke="#ced2ce" stroke-opacity=".12"/>
+    <path d="M337 359h526" stroke="#000" stroke-opacity=".48"/>
+
+    <g>
+      <circle class="pilot-glow" cx="164" cy="300" r="20" fill="#58e0d1" opacity=".16" filter="url(#softGlow)"/>
+      <circle cx="164" cy="300" r="7" fill="url(#lamp)"/>
+      <circle cx="209" cy="300" r="20" fill="#0b0d0e" stroke="#555955"/>
+      <circle cx="209" cy="300" r="12" fill="#282b2a"/>
+      <path d="M203 294l12 6-12 6Z" fill="#9ca29e"/>
+      <circle cx="991" cy="300" r="48" fill="#0c0e0f" stroke="#4f5350" stroke-width="3"/>
+      <circle cx="991" cy="300" r="37" fill="#252827" stroke="#0a0b0c"/>
+      <path d="M991 270v15" stroke="#d3d5cf" stroke-width="3" stroke-linecap="round"/>
+    </g>
+
+    <g>
+      <rect x="356" y="410" width="56" height="18" rx="4" fill="#090a0b" stroke="#3d413f"/>
+      <rect x="422" y="410" width="56" height="18" rx="4" fill="#090a0b" stroke="#3d413f"/>
+      <rect x="488" y="410" width="56" height="18" rx="4" fill="#090a0b" stroke="#3d413f"/>
+      <g transform="translate(0 2)">
+        <rect x="554" y="408" width="92" height="20" rx="5" fill="#c5c7c1" stroke="#f0f0e9" stroke-opacity=".45"/>
+        <path d="M592 413l14 7-14 7Z" fill="#171918"/>
+      </g>
+      <rect x="656" y="410" width="56" height="18" rx="4" fill="#090a0b" stroke="#3d413f"/>
+      <rect x="722" y="410" width="56" height="18" rx="4" fill="#090a0b" stroke="#3d413f"/>
+      <rect x="788" y="410" width="56" height="18" rx="4" fill="#090a0b" stroke="#3d413f"/>
+    </g>
+  </g>
+</svg>
