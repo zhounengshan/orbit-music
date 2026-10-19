@@ -1,7 +1,7 @@
 :root {
   --bg: #0a0a0b; --surface: #121214; --surface-raised: #1a1a1d; --surface-soft: #222226;
   --line: rgba(255,255,255,.075); --line-strong: rgba(255,255,255,.15);
-  --text: #f4f2ed; --muted: #a09fa4; --quiet: #6f6e74;
+  --text: #f4f2ed; --muted: #a09fa4; --quiet: #85848a;
   --accent: #ff674d; --accent-hover: #ff826d; --accent-ink: #170806; --danger: #ff6b7a;
   --sidebar: 224px; --lyrics: 340px; --player: 92px;
   color-scheme: dark; font-family: "DM Sans", "Noto Sans SC", sans-serif;
@@ -68,7 +68,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .content { max-width: 1320px; margin: 0 auto; padding: 42px 40px 48px; }
 .section-block { margin-top: 0; }
 .section-head { margin-bottom: 24px; display: flex; justify-content: space-between; align-items: end; gap: 16px; }
-.section-head h2 { margin: 0; font-size: clamp(30px,3vw,46px); line-height: 1; letter-spacing: -.055em; }
+.section-head h1 { margin: 0; font-size: clamp(30px,3vw,46px); line-height: 1; letter-spacing: -.055em; }
 .section-head p { margin: 10px 0 0; color: var(--muted); font-size: 13px; }
 .view-actions { display: flex; gap: 8px; }
 .view-actions button { min-height: 38px; padding: 0 12px; border: 1px solid var(--line); border-radius: 7px; background: var(--surface); color: var(--muted); font-size: 11px; cursor: pointer; }
@@ -186,7 +186,7 @@ input[type="range"] { height: 3px; accent-color: var(--accent); cursor: pointer;
   .search-box #searchBtn .icon { display: block; width: 17px; }
   .content { padding: 26px 14px 28px; }
   .section-head { align-items: center; }
-  .section-head h2 { font-size: 28px; }
+  .section-head h1 { font-size: 28px; }
   .section-head p { max-width: 245px; line-height: 1.5; }
   #sortBtn { display: none; }
   .view-actions button { min-height: 44px; }
