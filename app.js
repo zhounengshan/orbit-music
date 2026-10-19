@@ -409,25 +409,35 @@ audio.addEventListener('error', () => {
 });
 
 function updateAlbumHero(track) {
-  if (!track) return;
-  const cover = track.cover || './assets/orbit-cover-v2.jpg';
-  $('#heroCover').src = cover;
-  $('#heroCover').alt = `${track.title} 封面`;
-  $('#heroTitle').textContent = track.title;
-  $('#heroArtist').textContent = `${track.artist} · ${track.album || '未知专辑'}`;
-  $('#heroSearchFocus').textContent = '换一首歌';
+  return track;
 }
 
 function initAlbumHero() {
-  const hero = $('.album-hero');
-  const syncMotion = () => hero?.classList.toggle('is-playing', !audio.paused);
-  $('#heroSearchFocus')?.addEventListener('click', () => {
-    $('#searchInput').focus();
-    $('#searchInput').scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'center'});
-  });
+  const hero = $('.light-hero');
+  const bars = $$('#lightStage i');
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let frame = 0;
+  const draw = () => {
+    const t = audio.currentTime || performance.now() / 5000;
+    bars.forEach((bar, index) => {
+      const band = .2 + Math.pow(Math.sin((index + 1) / (bars.length + 1) * Math.PI), 1.4) * .72;
+      const frequency = 3.2 + (index % 6) * .72;
+      const pulse = Math.abs(Math.sin(t * frequency + index * .77));
+      const detail = Math.abs(Math.sin(t * 1.7 + index * 1.91));
+      const level = Math.min(.98, .08 + band * (.24 + pulse * .58 + detail * .18));
+      bar.style.transform = `scaleY(${level.toFixed(3)})`;
+    });
+    if (!audio.paused && !reduced) frame = requestAnimationFrame(draw);
+    else frame = 0;
+  };
+  const syncMotion = () => {
+    hero?.classList.toggle('is-playing', !audio.paused);
+    if (!audio.paused && !frame && !reduced) frame = requestAnimationFrame(draw);
+    if (audio.paused && frame) { cancelAnimationFrame(frame); frame = 0; }
+  };
   audio.addEventListener('play', syncMotion);
   audio.addEventListener('pause', syncMotion);
-  syncMotion();
+  draw(); syncMotion();
 }
 
 renderPlaylists(); renderTracks(); initAlbumHero();
