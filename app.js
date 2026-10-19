@@ -77,6 +77,7 @@ function renderTracks(list = visibleTracks) {
       <span class="quality">${escapeHtml(track.quality || 'MP3')}</span>
       <span class="track-time">${formatTime(track.duration || 32)}</span>
       <div class="track-actions">
+        <button class="play-track-btn" data-action="play" aria-label="播放 ${escapeHtml(track.title)}"><span>▶</span><b>播放</b></button>
         <button class="icon-btn ${state.favorites.has(String(track.id))?'active':''}" data-action="favorite" aria-label="收藏 ${escapeHtml(track.title)}">${state.favorites.has(String(track.id))?'♥':'♡'}</button>
         <button class="icon-btn download-btn" data-action="download" aria-label="下载 ${track.title}">⇣</button>
         <button class="icon-btn delete-btn" data-action="delete" aria-label="删除 ${track.title}">×</button>
@@ -321,6 +322,14 @@ $('#trackTable').addEventListener('click', e => {
     delete state.remoteLibrary[id]; state.favorites.delete(id); state.downloads = state.downloads.filter(item => item !== id);
     saveState(); renderTracks(); toast(`已从曲库移除「${track.title}」`);
   }
+});
+
+$('#trackTable').addEventListener('dblclick', e => {
+  if (e.target.closest('button')) return;
+  const row = e.target.closest('.track-row');
+  if (!row) return;
+  const track = getTrackById(row.dataset.id);
+  if (track) selectTrack(track);
 });
 
 $('#searchBtn').onclick = runSearch;
