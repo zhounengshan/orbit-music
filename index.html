@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="./styles.css?v=20261019-light-stage" />
+  <link rel="stylesheet" href="./styles.css?v=20261019-vinyl-deck" />
 </head>
 <body>
   <svg class="icon-sprite" aria-hidden="true">
@@ -75,10 +75,13 @@
       </header>
 
       <div class="content" id="content">
-        <section class="hero light-hero" aria-label="随播放起伏的动态光柱">
-          <div class="light-stage" id="lightStage" aria-hidden="true">
-            <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
-            <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+        <section class="hero vinyl-hero" aria-label="旋转的黑胶唱片机">
+          <div class="vinyl-deck" aria-hidden="true">
+            <div class="record-shadow"></div>
+            <img class="vinyl-record" id="vinylRecord" src="./assets/vinyl-record-v1.png" alt="" />
+            <div class="vinyl-spindle"></div>
+            <div class="tonearm"><i></i><b></b></div>
+            <div class="deck-controls"><i></i><i></i><i></i></div>
           </div>
         </section>
 
@@ -149,6 +152,6 @@
     </div>
   </div>
   <audio id="audio" preload="metadata"></audio>
-  <script src="./app.js?v=20261019-light-stage"></script>
+  <script src="./app.js?v=20261019-vinyl-deck"></script>
 </body>
 </html>
