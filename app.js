@@ -413,7 +413,6 @@ function updateAlbumHero(track) {
   const cover = track.cover || './assets/orbit-cover-v2.jpg';
   $('#heroCover').src = cover;
   $('#heroCover').alt = `${track.title} 封面`;
-  $('#heroBackdrop').style.backgroundImage = `url("${String(cover).replaceAll('"','%22')}")`;
   $('#heroTitle').textContent = track.title;
   $('#heroArtist').textContent = `${track.artist} · ${track.album || '未知专辑'}`;
   $('#heroSearchFocus').textContent = '换一首歌';
