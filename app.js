@@ -423,6 +423,15 @@ $('#sortBtn').onclick = () => { visibleTracks.reverse(); playQueue = visibleTrac
 $('#createPlaylistBtn').onclick = () => { $('#playlistModal').hidden = false; setTimeout(() => $('#playlistName').focus(), 50); };
 $('[data-close-modal]').onclick = () => { $('#playlistModal').hidden = true; $('#createPlaylistBtn').focus(); };
 $('#savePlaylistBtn').onclick = () => { const name=$('#playlistName').value.trim(); if(!name) return toast('请先输入歌单名称'); state.playlists.push(name); saveState(); renderPlaylists(); $('#playlistModal').hidden=true; $('#playlistName').value=''; $('#createPlaylistBtn').focus(); toast(`歌单「${name}」已创建`); };
+$('#playlistModal').addEventListener('keydown', e => {
+  if (e.key !== 'Tab') return;
+  const focusable = $$(`#playlistModal button, #playlistModal input`).filter(el => !el.disabled);
+  if (!focusable.length) return;
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+  if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+  else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+});
 $('#playlistNav').addEventListener('click', e => { const b=e.target.closest('[data-playlist-name]'); if(b) { toast(`已打开歌单「${b.dataset.playlistName}」`); closeSidebar(); } });
 document.addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
