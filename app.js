@@ -90,9 +90,16 @@ function renderTracks(list = visibleTracks) {
 
 function currentTrack() { return activeTrack || tracks[0]; }
 
-async function api(path, params) {
-  const url = new URL(path, 'https://orbit-music-private.zhou1992.chatgpt.site');
+const API_ORIGIN = 'https://orbit-music-private.zhou1992.chatgpt.site';
+
+function apiUrl(path, params = {}) {
+  const url = new URL(path, API_ORIGIN);
   Object.entries(params).forEach(([key, value]) => value !== undefined && value !== null && url.searchParams.set(key, value));
+  return url;
+}
+
+async function api(path, params) {
+  const url = apiUrl(path, params);
   const response = await fetch(url);
   const body = await response.json().catch(() => ({}));
   if (!response.ok || body.code !== 0) throw new Error(body.msg || `请求失败（${response.status}）`);
@@ -142,20 +149,21 @@ async function selectTrack(track, autoplay = true) {
       const playInfo = track.minfo?.find(item => item.format === 'mp3' && String(item.bitrate) === '320') || track.minfo?.find(item => item.format === 'mp3') || track.minfo?.[0];
       if (!playInfo) throw new Error('这首歌没有可用的播放音质');
       const params = {platform: track.platform, songid: track.sourceId, format: playInfo.format, bitrate: playInfo.bitrate, time: track.time, sign: track.sign};
-      const [urlResult, lyricResult] = await Promise.all([
-        track.resolvedUrl ? Promise.resolve({data:{url:track.resolvedUrl}}) : api('/api/url', params),
-        track.lyrics?.length ? Promise.resolve({data:''}) : api('/api/lyric', params).catch(() => ({data:''}))
-      ]);
+      track.resolvedUrl ||= apiUrl('/api/stream', params).href;
+      audio.src = track.resolvedUrl;
+      audio.volume = Number($('#volume').value) / 100;
+      if (autoplay) playAudio();
+      const lyricResult = track.lyrics?.length ? {data:''} : await api('/api/lyric', params).catch(() => ({data:''}));
       if (serial !== searchSerial) return;
-      track.resolvedUrl = urlResult.data?.url;
       if (lyricResult.data) track.lyrics = parseLrc(lyricResult.data);
       if (!track.lyrics?.length) track.lyrics = [[0, '暂无时间轴歌词', '']];
       $('#playerArtist').textContent = track.artist;
       renderLyrics(track);
-      audio.src = track.resolvedUrl;
-    } else audio.src = track.localUrl || getSynthUrl(track);
-    audio.volume = Number($('#volume').value) / 100;
-    if (autoplay) playAudio();
+    } else {
+      audio.src = track.localUrl || getSynthUrl(track);
+      audio.volume = Number($('#volume').value) / 100;
+      if (autoplay) playAudio();
+    }
     renderTracks(visibleTracks);
   } catch (error) {
     $('#playerArtist').textContent = track.artist;
@@ -169,7 +177,7 @@ function renderLyrics(track) {
 }
 
 function playAudio() {
-  audio.play().then(() => { isPlaying = true; updatePlayState(); }).catch(() => toast('浏览器暂停了自动播放，请再次点击播放'));
+  audio.play().then(() => { isPlaying = true; updatePlayState(); }).catch(() => toast('播放未能启动，请点击底部播放按钮重试'));
 }
 
 function togglePlay() {
@@ -348,5 +356,10 @@ audio.addEventListener('timeupdate', updateProgress);
 audio.addEventListener('play', () => { isPlaying=true; updatePlayState(); });
 audio.addEventListener('pause', () => { isPlaying=false; updatePlayState(); });
 audio.addEventListener('ended', () => $('#nextBtn').click());
+audio.addEventListener('error', () => {
+  isPlaying = false;
+  updatePlayState();
+  toast('这个音频资源暂时不可用，请换一个版本');
+});
 
 renderWave(); renderPlaylists(); renderTracks(); selectTrack(tracks[0], false);
