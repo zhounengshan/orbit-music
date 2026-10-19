@@ -412,14 +412,18 @@ function updateAlbumHero(track) {
   return track;
 }
 
-function initAlbumHero() {
-  const hero = $('.vinyl-hero');
+function initCassetteHero() {
+  const hero = $('.cassette-hero');
+  const artwork = $('#cassetteArtwork');
   const syncMotion = () => {
-    hero?.classList.toggle('is-playing', !audio.paused);
+    const playing = !audio.paused;
+    hero?.classList.toggle('is-playing', playing);
+    artwork?.contentDocument?.documentElement.classList.toggle('is-playing', playing);
   };
+  artwork?.addEventListener('load', syncMotion);
   audio.addEventListener('play', syncMotion);
   audio.addEventListener('pause', syncMotion);
   syncMotion();
 }
 
-renderPlaylists(); renderTracks(); initAlbumHero();
+renderPlaylists(); renderTracks(); initCassetteHero();
