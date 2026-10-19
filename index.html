@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="./styles.css?v=20261019-album-stage" />
+  <link rel="stylesheet" href="./styles.css?v=20261019-listening-room" />
 </head>
 <body>
   <svg class="icon-sprite" aria-hidden="true">
@@ -75,19 +75,21 @@
       </header>
 
       <div class="content" id="content">
-        <section class="hero album-hero" aria-label="当前播放封面">
-          <div class="album-backdrop" id="heroBackdrop" aria-hidden="true"></div>
-          <div class="album-stage">
-            <div class="album-artwork">
-              <img id="heroCover" src="./assets/orbit-cover-v2.jpg" alt="ORBIT MUSIC 默认封面" />
-            </div>
-            <div class="album-info">
-              <h1 id="heroTitle">尚未播放</h1>
-              <p id="heroArtist">搜索一首歌，让封面成为首页。</p>
-              <button type="button" id="heroSearchFocus">寻找音乐</button>
+        <section class="hero album-hero vintage-hero" aria-label="复古音乐聆听空间">
+          <div class="vintage-backdrop" aria-hidden="true"></div>
+          <div class="vintage-copy">
+            <h1>让音乐，<br>把时间放慢。</h1>
+            <p>从黑胶的温度，到今天想听的每一首。</p>
+            <button type="button" id="heroSearchFocus">寻找音乐</button>
+          </div>
+          <div class="hero-now-playing">
+            <img id="heroCover" src="./assets/orbit-cover-v2.jpg" alt="ORBIT MUSIC 默认封面" />
+            <div>
+              <strong id="heroTitle">尚未播放</strong>
+              <span id="heroArtist">搜索一首歌开始聆听</span>
             </div>
           </div>
-          <div class="album-spectrum" aria-hidden="true">
+          <div class="album-spectrum vintage-meter" aria-hidden="true">
             <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
             <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
           </div>
@@ -160,6 +162,6 @@
     </div>
   </div>
   <audio id="audio" preload="metadata"></audio>
-  <script src="./app.js?v=20261019-album-stage"></script>
+  <script src="./app.js?v=20261019-listening-room"></script>
 </body>
 </html>
