@@ -305,12 +305,39 @@ function showView(view) {
 function closeSidebar() {
   $('.sidebar').classList.remove('open');
   document.body.classList.remove('menu-open');
+  $('#mobileMenu').setAttribute('aria-expanded', 'false');
+  if (innerWidth < 740) $('.sidebar').inert = true;
 }
 
 function toggleSidebar() {
   const opening = !$('.sidebar').classList.contains('open');
   $('.sidebar').classList.toggle('open', opening);
   document.body.classList.toggle('menu-open', opening);
+  $('#mobileMenu').setAttribute('aria-expanded', String(opening));
+  $('.sidebar').inert = !opening;
+}
+
+function syncSidebarA11y() {
+  if (innerWidth >= 740) $('.sidebar').inert = false;
+  else if (!$('.sidebar').classList.contains('open')) $('.sidebar').inert = true;
+}
+
+function openLyrics() {
+  const panel = $('#lyricsPanel');
+  panel.inert = false;
+  panel.setAttribute('aria-hidden', 'false');
+  panel.classList.add('open');
+  $('#lyricsBtn').setAttribute('aria-expanded', 'true');
+  $('#closeLyrics').focus();
+}
+
+function closeLyrics() {
+  const panel = $('#lyricsPanel');
+  panel.classList.remove('open');
+  panel.setAttribute('aria-hidden', 'true');
+  panel.inert = true;
+  $('#lyricsBtn').setAttribute('aria-expanded', 'false');
+  $('#lyricsBtn').focus();
 }
 
 function handleImport(files) {
@@ -384,8 +411,8 @@ $('#prevBtn').onclick = () => playQueue.length ? selectTrack(playQueue[(currentI
 $('#nextBtn').onclick = () => playQueue.length ? selectTrack(playQueue[(currentIndex + 1) % playQueue.length]) : toast('播放队列还是空的');
 $('#playerFavorite').onclick = () => toggleFavorite(currentTrack());
 $('#downloadCurrent').onclick = () => downloadTrack(currentTrack());
-$('#lyricsBtn').onclick = () => $('#lyricsPanel').classList.add('open');
-$('#closeLyrics').onclick = () => $('#lyricsPanel').classList.remove('open');
+$('#lyricsBtn').onclick = openLyrics;
+$('#closeLyrics').onclick = closeLyrics;
 $('#lyricModeBtn').onclick = () => { lyricTranslation = !lyricTranslation; $('#lyricsPanel').classList.toggle('hide-translation', !lyricTranslation); $('#lyricModeBtn').textContent = `译文 · ${lyricTranslation?'开':'关'}`; };
 $('#volume').oninput = e => audio.volume = Number(e.target.value)/100;
 $('#progress').oninput = e => { if (audio.duration) audio.currentTime = audio.duration * Number(e.target.value)/100; };
@@ -394,10 +421,16 @@ $('#shuffleBtn').onclick = e => { e.currentTarget.classList.toggle('active'); to
 $('#queueBtn').onclick = () => toast(`播放队列 · ${playQueue.length} 首`);
 $('#sortBtn').onclick = () => { visibleTracks.reverse(); playQueue = visibleTracks; renderTracks(); toast('歌曲顺序已切换'); };
 $('#createPlaylistBtn').onclick = () => { $('#playlistModal').hidden = false; setTimeout(() => $('#playlistName').focus(), 50); };
-$('[data-close-modal]').onclick = () => $('#playlistModal').hidden = true;
-$('#savePlaylistBtn').onclick = () => { const name=$('#playlistName').value.trim(); if(!name) return toast('请先输入歌单名称'); state.playlists.push(name); saveState(); renderPlaylists(); $('#playlistModal').hidden=true; $('#playlistName').value=''; toast(`歌单「${name}」已创建`); };
+$('[data-close-modal]').onclick = () => { $('#playlistModal').hidden = true; $('#createPlaylistBtn').focus(); };
+$('#savePlaylistBtn').onclick = () => { const name=$('#playlistName').value.trim(); if(!name) return toast('请先输入歌单名称'); state.playlists.push(name); saveState(); renderPlaylists(); $('#playlistModal').hidden=true; $('#playlistName').value=''; $('#createPlaylistBtn').focus(); toast(`歌单「${name}」已创建`); };
 $('#playlistNav').addEventListener('click', e => { const b=e.target.closest('[data-playlist-name]'); if(b) { toast(`已打开歌单「${b.dataset.playlistName}」`); closeSidebar(); } });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  if ($('#playlistModal').hidden === false) { $('#playlistModal').hidden = true; $('#createPlaylistBtn').focus(); return; }
+  if ($('#lyricsPanel').classList.contains('open')) { closeLyrics(); return; }
+  closeSidebar();
+});
+window.addEventListener('resize', syncSidebarA11y);
 audio.addEventListener('timeupdate', updateProgress);
 audio.addEventListener('play', () => { isPlaying=true; updatePlayState(); });
 audio.addEventListener('pause', () => { isPlaying=false; updatePlayState(); });
@@ -412,4 +445,4 @@ function updateAlbumHero(track) {
   return track;
 }
 
-renderPlaylists(); renderTracks();
+renderPlaylists(); renderTracks(); syncSidebarA11y();
