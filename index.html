@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="./styles.css?v=20261019-signal-field" />
+  <link rel="stylesheet" href="./styles.css?v=20261019-album-stage" />
 </head>
 <body>
   <svg class="icon-sprite" aria-hidden="true">
@@ -75,15 +75,21 @@
       </header>
 
       <div class="content" id="content">
-        <section class="hero" aria-label="ORBIT 动态声场">
-          <canvas class="signal-canvas" id="signalCanvas" aria-hidden="true"></canvas>
-          <div class="signal-hud" aria-hidden="true">
-            <span class="signal-brand"><i></i> ORBIT SIGNAL</span>
-            <span class="signal-state" id="signalState">STANDBY</span>
+        <section class="hero album-hero" aria-label="当前播放封面">
+          <div class="album-backdrop" id="heroBackdrop" aria-hidden="true"></div>
+          <div class="album-stage">
+            <div class="album-artwork">
+              <img id="heroCover" src="./assets/orbit-cover-v2.jpg" alt="ORBIT MUSIC 默认封面" />
+            </div>
+            <div class="album-info">
+              <h1 id="heroTitle">尚未播放</h1>
+              <p id="heroArtist">搜索一首歌，让封面成为首页。</p>
+              <button type="button" id="heroSearchFocus">寻找音乐</button>
+            </div>
           </div>
-          <div class="signal-footer" aria-hidden="true">
-            <span>AUDIO / VISUAL SYSTEM</span>
-            <span>FREQ 20 — 20K HZ</span>
+          <div class="album-spectrum" aria-hidden="true">
+            <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+            <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
           </div>
         </section>
 
@@ -154,6 +160,6 @@
     </div>
   </div>
   <audio id="audio" preload="metadata"></audio>
-  <script src="./app.js?v=20261019-signal-field"></script>
+  <script src="./app.js?v=20261019-album-stage"></script>
 </body>
 </html>
