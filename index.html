@@ -32,7 +32,7 @@
     <symbol id="icon-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
   </svg>
   <div class="shell">
-    <aside class="sidebar" aria-label="主导航">
+    <aside class="sidebar" id="sidebar" aria-label="主导航">
       <a class="brand" href="#" aria-label="Orbit Music 首页">
         <span class="brand-mark"><i></i><i></i><i></i></span>
         <span>ORBIT<span> MUSIC</span></span>
@@ -54,7 +54,7 @@
 
     <main class="main">
       <header class="topbar">
-        <button class="mobile-menu" id="mobileMenu" aria-label="打开菜单"><svg class="icon"><use href="#icon-menu"/></svg></button>
+        <button class="mobile-menu" id="mobileMenu" aria-label="打开菜单" aria-controls="sidebar" aria-expanded="false"><svg class="icon"><use href="#icon-menu"/></svg></button>
         <label class="search-box">
           <svg class="icon search-icon"><use href="#icon-search"/></svg>
           <input id="searchInput" type="search" aria-label="搜索歌曲、艺人、专辑或链接" placeholder="搜索歌曲、艺人、专辑或链接" autocomplete="off" />
@@ -91,7 +91,7 @@
       </div>
     </main>
 
-    <aside class="lyrics-panel" id="lyricsPanel" aria-label="同步歌词">
+    <aside class="lyrics-panel" id="lyricsPanel" aria-label="同步歌词" aria-hidden="true" inert>
       <button class="close-panel" id="closeLyrics" aria-label="关闭歌词"><svg class="icon"><use href="#icon-close"/></svg></button>
       <div class="lyrics-top">
         <span class="playing-label"><i></i>正在播放</span>
@@ -125,7 +125,7 @@
       </div>
     </div>
     <div class="player-tools">
-      <button id="lyricsBtn" class="lyrics-button" aria-label="查看歌词"><svg class="icon"><use href="#icon-lyrics"/></svg><span>歌词</span></button>
+      <button id="lyricsBtn" class="lyrics-button" aria-label="查看歌词" aria-controls="lyricsPanel" aria-expanded="false"><svg class="icon"><use href="#icon-lyrics"/></svg><span>歌词</span></button>
       <button id="queueBtn" aria-label="播放队列"><svg class="icon"><use href="#icon-list"/></svg></button>
       <svg class="icon volume-icon"><use href="#icon-volume"/></svg><input id="volume" type="range" min="0" max="100" value="75" aria-label="音量" />
       <button id="downloadCurrent" aria-label="下载当前歌曲"><svg class="icon"><use href="#icon-download"/></svg></button>
@@ -133,10 +133,10 @@
   </footer>
 
   <div class="toast" id="toast" role="status"></div>
-  <div class="modal" id="playlistModal" hidden>
+  <div class="modal" id="playlistModal" role="dialog" aria-modal="true" aria-labelledby="playlistModalTitle" hidden>
     <div class="modal-card">
       <button class="modal-close" data-close-modal aria-label="关闭"><svg class="icon"><use href="#icon-close"/></svg></button>
-      <h2>新建歌单</h2>
+      <h2 id="playlistModalTitle">新建歌单</h2>
       <label>歌单名称<input id="playlistName" maxlength="18" placeholder="例如：凌晨三点" /></label>
       <button class="primary-btn" id="savePlaylistBtn">创建歌单</button>
     </div>
