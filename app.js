@@ -112,7 +112,8 @@ function parseLrc(text) {
 async function refreshRemoteTrack(track) {
   const signedAt = Number(track.time) || 0;
   const signatureIsFresh = track.sign && signedAt && Math.abs(Date.now() / 1000 - signedAt) < 240;
-  if (signatureIsFresh && Array.isArray(track.minfo) && track.minfo.length) return track;
+  const isPersistedFavorite = state.remoteLibrary[String(track.id)] === track;
+  if (!isPersistedFavorite && signatureIsFresh && Array.isArray(track.minfo) && track.minfo.length) return track;
 
   const result = await api('/api/search', {keyword: track.title, platform: track.platform, page: 1, size: 20});
   const items = result.data?.list || [];
