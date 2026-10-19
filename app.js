@@ -109,6 +109,29 @@ function parseLrc(text) {
   return output.sort((a, b) => a[0] - b[0]);
 }
 
+async function refreshRemoteTrack(track) {
+  const signedAt = Number(track.time) || 0;
+  const signatureIsFresh = track.sign && signedAt && Math.abs(Date.now() / 1000 - signedAt) < 240;
+  if (signatureIsFresh && Array.isArray(track.minfo) && track.minfo.length) return track;
+
+  const result = await api('/api/search', {keyword: track.title, platform: track.platform, page: 1, size: 20});
+  const items = result.data?.list || [];
+  const match = items.find(item => String(item.id) === String(track.sourceId)) || items[0];
+  if (!match) throw new Error('收藏歌曲已失效，请重新搜索后收藏');
+
+  const fresh = normalizeRemote(match, track.platform, track.color || 0);
+  Object.assign(track, fresh, {id: track.id, resolvedUrl: ''});
+  const id = String(track.id);
+  if (state.remoteLibrary[id]) {
+    const saved = {...track};
+    delete saved.resolvedUrl;
+    delete saved.lyrics;
+    state.remoteLibrary[id] = saved;
+    saveState();
+  }
+  return track;
+}
+
 async function selectTrack(track, autoplay = true) {
   activeTrack = track;
   if (!playQueue.some(item => String(item.id) === String(track.id))) playQueue = visibleTracks.length ? visibleTracks : allTracks();
@@ -140,6 +163,8 @@ async function selectTrack(track, autoplay = true) {
   try {
     if (track.remote) {
       $('#playerArtist').textContent = '正在解析音频与歌词…';
+      await refreshRemoteTrack(track);
+      if (serial !== searchSerial) return;
       const playInfo = track.minfo?.find(item => item.format === 'mp3' && String(item.bitrate) === '320') || track.minfo?.find(item => item.format === 'mp3') || track.minfo?.[0];
       if (!playInfo) throw new Error('这首歌没有可用的播放音质');
       const params = {platform: track.platform, songid: track.sourceId, format: playInfo.format, bitrate: playInfo.bitrate, time: track.time, sign: track.sign};
