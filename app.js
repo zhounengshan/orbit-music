@@ -1,15 +1,8 @@
-const tracks = [
-  { id: 1, title: "星际漫游", artist: "Neon Harbor", album: "光谱之外", quality: "24 BIT", bpm: 92, key: 0, color: 0, lyrics: [[0,"离开地面以前","Before we leave the ground"],[4,"把未完成的梦装进行囊","Pack the unfinished dreams"],[8,"穿过城市最后一束光","Through the city's final light"],[12,"我们沿着星轨流浪","We wander along the orbit"],[16,"让寂静变成一片海洋","Let silence become an ocean"],[20,"微弱心跳仍在导航","A quiet heartbeat still guides us"],[24,"所有远方 都有回响","Every distance echoes back"],[28,"今夜进入自己的轨道","Tonight, enter your own orbit"]] },
-  { id: 2, title: "城市脉冲", artist: "Future Echo", album: "霓虹心跳", quality: "FLAC", bpm: 112, key: 4, color: 1, lyrics: [[0,"红灯之后 城市开始呼吸","After the red light, the city breathes"],[4,"电流沿着街道游离","Current drifts through the streets"],[8,"把脚步调成同一种频率","Set our footsteps to one frequency"],[12,"陌生眼神交换秘密","Strangers trade their secrets"],[16,"喧嚣背后藏着旋律","A melody hides behind the noise"],[20,"每扇窗都是一颗星体","Every window is a star"],[24,"我们短暂地相遇","We meet for just a moment"],[28,"又在晨光以前散去","Then fade before the dawn"]] },
-  { id: 3, title: "失重花园", artist: "Lumen", album: "零号温室", quality: "SQ", bpm: 76, key: 7, color: 2, lyrics: [[0,"花朵在真空缓慢盛开","Flowers bloom slowly in the void"],[4,"没有风 也没有尘埃","No wind, no dust"],[8,"时间绕过透明的叶脉","Time bends around clear veins"],[12,"带走所有意外","Taking every accident away"],[16,"如果重力不再存在","If gravity disappears"],[20,"思念会落向哪片海","Where would longing fall"],[24,"我在失重花园等待","I wait in the weightless garden"],[28,"等你从光年之外归来","For you to return across light-years"]] },
-  { id: 4, title: "午夜通信", artist: "Ø Signal", album: "无人接听", quality: "24 BIT", bpm: 100, key: 9, color: 3, lyrics: [[0,"频率调到零点以后","Tune in after midnight"],[4,"有谁在宇宙另一头","Someone waits across the universe"],[8,"发送一句没有地址的问候","Send a greeting with no address"],[12,"穿过沉默的气流","Across a silent current"],[16,"信号微弱却足够","The signal is faint but enough"],[20,"证明我们还在等候","To prove we're still waiting"],[24,"如果此刻你也抬头","If you're looking up now"],[28,"就让星光替我开口","Let starlight speak for me"]] },
-  { id: 5, title: "月面低语", artist: "Mira Qi", album: "潮汐档案", quality: "FLAC", bpm: 68, key: 2, color: 4, lyrics: [[0,"海水记得月亮的名字","The sea remembers the moon"],[4,"潮汐写下银色的字","Tides write in silver"],[8,"那些来不及说的故事","The stories left untold"],[12,"在夜里重新开始","Begin again at night"],[16,"沿着光的边缘行驶","Travel along the edge of light"],[20,"把孤独折成一枚戒指","Fold loneliness into a ring"],[24,"当世界终于静止","When the world becomes still"],[28,"听见月面低声的诗","Hear a poem from the moon"]] },
-  { id: 6, title: "绿色噪点", artist: "Mono Moss", album: "自然机器", quality: "SQ", bpm: 84, key: 5, color: 5, lyrics: [[0,"雨点落进旧收音机","Rain falls into an old radio"],[4,"长出一片绿色频率","Growing a green frequency"],[8,"苔藓覆盖冰冷机器","Moss covers the cold machine"],[12,"所有噪音慢慢平息","All the noise settles"],[16,"呼吸跟随树林迁徙","Breath migrates with the forest"],[20,"光线穿过清晨雾气","Light moves through morning fog"],[24,"关闭过载的思绪","Turn off the overloaded mind"],[28,"回到自然的缝隙","Return to nature's quiet gaps"]] }
-];
+const tracks = [];
 
 let visibleTracks = [...tracks];
 let currentIndex = 0;
-let activeTrack = tracks[0];
+let activeTrack = null;
 let playQueue = [...tracks];
 let isPlaying = false;
 let isManageMode = false;
@@ -24,11 +17,12 @@ const $$ = (s) => [...document.querySelectorAll(s)];
 const state = {
   favorites: new Set(JSON.parse(localStorage.getItem('orbit-favorites') || '[]').map(String)),
   downloads: JSON.parse(localStorage.getItem('orbit-downloads') || '[]').map(String),
-  playlists: JSON.parse(localStorage.getItem('orbit-playlists') || '["夜航模式","专注频率","私人雷达"]'),
+  playlists: JSON.parse(localStorage.getItem('orbit-playlists') || '[]'),
   remoteLibrary: JSON.parse(localStorage.getItem('orbit-remote-library') || '{}')
 };
 
 const escapeHtml = (value = '') => String(value).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+const icon = (name) => `<svg class="icon" aria-hidden="true"><use href="#icon-${name}"/></svg>`;
 const allTracks = () => {
   const byId = new Map();
   [...tracks, ...Object.values(state.remoteLibrary), ...searchTracks, ...localTracks].forEach(track => byId.set(String(track.id), track));
@@ -55,13 +49,10 @@ function formatTime(seconds) {
   return `${String(Math.floor(n / 60)).padStart(2,'0')}:${String(Math.floor(n % 60)).padStart(2,'0')}`;
 }
 
-function renderWave() {
-  $('#heroWave').innerHTML = Array.from({length: 26}, (_, i) => `<i style="height:${5 + ((i * 13) % 20)}px"></i>`).join('');
-  $('#statBars').innerHTML = [18,26,14,34,28,43,24,37,31,46,29,40].map((h,i) => `<i class="${i>8?'active':''}" style="height:${h}px"></i>`).join('');
-}
-
 function renderPlaylists() {
-  $('#playlistNav').innerHTML = state.playlists.map(name => `<button class="playlist-link" data-playlist-name="${name.replaceAll('"','&quot;')}"># ${name}</button>`).join('');
+  $('#playlistNav').innerHTML = state.playlists.length
+    ? state.playlists.map(name => `<button class="playlist-link" data-playlist-name="${name.replaceAll('"','&quot;')}">${escapeHtml(name)}</button>`).join('')
+    : '<p class="playlist-empty">还没有歌单</p>';
 }
 
 function getTrackById(id) { return allTracks().find(t => String(t.id) === String(id)); }
@@ -71,16 +62,16 @@ function renderTracks(list = visibleTracks) {
   table.classList.toggle('manage-mode', isManageMode);
   table.innerHTML = list.map((track, index) => `
     <article class="track-row" data-id="${escapeHtml(track.id)}">
-      <button class="track-index icon-btn row-play" data-action="play" aria-label="播放 ${escapeHtml(track.title)}">${String(currentTrack()?.id) === String(track.id) && isPlaying ? 'Ⅱ' : String(index + 1).padStart(2,'0')}</button>
-      <div class="track-meta"><div class="track-cover ${track.cover ? 'has-image' : `cover-${track.color ?? index % 6}`}" ${track.cover ? `style="background-image:url('${escapeHtml(track.cover)}')"` : ''}><span>${String(index + 1).padStart(2,'0')}</span></div><div class="track-name"><strong>${escapeHtml(track.title)}</strong><span>${escapeHtml(track.artist)}</span></div></div>
+      <button class="track-index icon-btn row-play" data-action="play" aria-label="播放 ${escapeHtml(track.title)}">${String(currentTrack()?.id) === String(track.id) && isPlaying ? icon('pause') : String(index + 1).padStart(2,'0')}</button>
+      <div class="track-meta"><div class="track-cover ${track.cover ? 'has-image' : `cover-${track.color ?? index % 6}`}" ${track.cover ? `style="background-image:url('${escapeHtml(track.cover)}')"` : ''}>${track.cover ? '' : `<span>${String(index + 1).padStart(2,'0')}</span>`}</div><div class="track-name"><strong>${escapeHtml(track.title)}</strong><span>${escapeHtml(track.artist)}</span></div></div>
       <span class="album-name">${escapeHtml(track.album || '未知专辑')}</span>
       <span class="quality">${escapeHtml(track.quality || 'MP3')}</span>
       <span class="track-time">${formatTime(track.duration || 32)}</span>
       <div class="track-actions">
-        <button class="play-track-btn" data-action="play" aria-label="播放 ${escapeHtml(track.title)}"><span>▶</span><b>播放</b></button>
-        <button class="icon-btn ${state.favorites.has(String(track.id))?'active':''}" data-action="favorite" aria-label="收藏 ${escapeHtml(track.title)}">${state.favorites.has(String(track.id))?'♥':'♡'}</button>
-        <button class="icon-btn download-btn" data-action="download" aria-label="下载 ${track.title}">⇣</button>
-        <button class="icon-btn delete-btn" data-action="delete" aria-label="删除 ${track.title}">×</button>
+        <button class="play-track-btn" data-action="play" aria-label="播放 ${escapeHtml(track.title)}">${icon('play')}<b>播放</b></button>
+        <button class="icon-btn ${state.favorites.has(String(track.id))?'active':''}" data-action="favorite" aria-label="收藏 ${escapeHtml(track.title)}">${icon('heart')}</button>
+        <button class="icon-btn download-btn" data-action="download" aria-label="下载 ${track.title}">${icon('download')}</button>
+        <button class="icon-btn delete-btn" data-action="delete" aria-label="删除 ${track.title}">${icon('close')}</button>
       </div>
     </article>`).join('');
   $('#emptyState').hidden = list.length > 0;
@@ -89,7 +80,7 @@ function renderTracks(list = visibleTracks) {
   $('#downloadCount').textContent = state.downloads.length;
 }
 
-function currentTrack() { return activeTrack || tracks[0]; }
+function currentTrack() { return activeTrack; }
 
 const API_ORIGIN = 'https://orbit-music-private.zhou1992.chatgpt.site';
 
@@ -126,13 +117,15 @@ async function selectTrack(track, autoplay = true) {
   $('#playerArtist').textContent = track.artist;
   $('#lyricTitle').textContent = track.title;
   $('#lyricArtist').textContent = `${track.artist} · ${track.album}`;
-  $('#playerFavorite').textContent = state.favorites.has(String(track.id)) ? '♥' : '♡';
+  $('#playerFavorite').innerHTML = icon('heart');
   $('#playerFavorite').classList.toggle('active', state.favorites.has(String(track.id)));
   $('#miniCover').className = `mini-cover cover-${track.color}`;
   $('#miniCover').innerHTML = `<span>${String(currentIndex + 1).padStart(2,'0')}</span>`;
   $('#coverLarge').className = `cover-large cover-${track.color}`;
   $('#coverLarge').innerHTML = `<span>ORBIT ${String(currentIndex + 1).padStart(2,'0')}</span>`;
   if (track.cover) {
+    $('#miniCover').innerHTML = '';
+    $('#coverLarge').innerHTML = '';
     $('#miniCover').style.backgroundImage = `url('${track.cover}')`;
     $('#miniCover').style.backgroundSize = 'cover';
     $('#coverLarge').style.backgroundImage = `url('${track.cover}')`;
@@ -182,13 +175,14 @@ function playAudio() {
 }
 
 function togglePlay() {
+  if (!audio.src && !currentTrack()) return toast('先搜索并选择一首歌曲');
   if (!audio.src) selectTrack(currentTrack(), true);
   else if (audio.paused) playAudio();
   else { audio.pause(); isPlaying = false; updatePlayState(); }
 }
 
 function updatePlayState() {
-  $('#mainPlayBtn').textContent = isPlaying ? 'Ⅱ' : '▶';
+  $('#mainPlayBtn').innerHTML = icon(isPlaying ? 'pause' : 'play');
   $('#mainPlayBtn').setAttribute('aria-label', isPlaying ? '暂停' : '播放');
   renderTracks(visibleTracks);
 }
@@ -231,6 +225,7 @@ function getSynthUrl(track) {
 }
 
 function toggleFavorite(track) {
+  if (!track) return toast('请先选择一首歌曲');
   const id = String(track.id);
   state.favorites.has(id) ? state.favorites.delete(id) : state.favorites.add(id);
   if (track.remote) {
@@ -238,11 +233,12 @@ function toggleFavorite(track) {
     state.remoteLibrary[id] = saved;
   }
   saveState(); renderTracks(visibleTracks);
-  $('#playerFavorite').textContent = state.favorites.has(id) ? '♥' : '♡';
+  $('#playerFavorite').innerHTML = icon('heart');
   toast(state.favorites.has(id) ? `已收藏「${track.title}」` : `已取消收藏「${track.title}」`);
 }
 
 async function downloadTrack(track) {
+  if (!track) return toast('请先选择一首歌曲');
   try {
     let url, extension = 'wav';
     if (track.remote) {
@@ -265,16 +261,29 @@ async function downloadTrack(track) {
 
 function showView(view) {
   $$('.nav-item').forEach(x => x.classList.toggle('active', x.dataset.view === view));
-  const titles = {discover:'今日精选', library:'我的曲库', favorites:'我的收藏', downloads:'下载记录'};
+  const titles = {discover:'搜索音乐', library:'我的曲库', favorites:'我的收藏', downloads:'下载记录'};
+  const subtitles = {discover:'输入歌曲、艺人或专辑名称，结果会显示在这里。', library:'收藏和导入的音乐都会保存在这里。', favorites:'你标记喜欢的歌曲。', downloads:'曾经下载过的歌曲。'};
   $('#sectionTitle').textContent = titles[view];
+  $('#sectionSubtitle').textContent = subtitles[view];
   const all = allTracks();
   if (view === 'favorites') visibleTracks = all.filter(t => state.favorites.has(String(t.id)));
   else if (view === 'downloads') visibleTracks = all.filter(t => state.downloads.includes(String(t.id)));
-  else if (view === 'discover') visibleTracks = [...tracks];
+  else if (view === 'discover') visibleTracks = searchTracks;
   else visibleTracks = all;
   playQueue = visibleTracks;
   renderTracks(visibleTracks);
-  if (innerWidth < 740) $('.sidebar').classList.remove('open');
+  if (innerWidth < 740) closeSidebar();
+}
+
+function closeSidebar() {
+  $('.sidebar').classList.remove('open');
+  document.body.classList.remove('menu-open');
+}
+
+function toggleSidebar() {
+  const opening = !$('.sidebar').classList.contains('open');
+  $('.sidebar').classList.toggle('open', opening);
+  document.body.classList.toggle('menu-open', opening);
 }
 
 function handleImport(files) {
@@ -294,7 +303,9 @@ async function runSearch() {
   if (!keyword) return showView('discover');
   const serial = ++searchSerial;
   const platform = $('#sourceSelect').value;
+  document.body.classList.add('results-active');
   $('#sectionTitle').textContent = `搜索「${keyword}」`;
+  $('#sectionSubtitle').textContent = innerWidth < 740 ? '点按播放按钮开始播放。' : '选择播放按钮，或双击歌曲所在行开始播放。';
   $('#trackTable').innerHTML = '<div class="search-loading"><i></i><span>正在连接音乐源…</span></div>';
   $('#emptyState').hidden = true;
   try {
@@ -317,7 +328,7 @@ $('#trackTable').addEventListener('click', e => {
   if (btn.dataset.action === 'download') downloadTrack(track);
   if (btn.dataset.action === 'delete') {
     const id = String(track.id);
-    if (!track.remote && !track.localUrl) return toast('首页精选不可删除');
+    if (!track.remote && !track.localUrl) return toast('这首歌曲不能删除');
     localTracks = localTracks.filter(t => String(t.id) !== id); visibleTracks = visibleTracks.filter(t => String(t.id) !== id);
     delete state.remoteLibrary[id]; state.favorites.delete(id); state.downloads = state.downloads.filter(item => item !== id);
     saveState(); renderTracks(); toast(`已从曲库移除「${track.title}」`);
@@ -336,15 +347,14 @@ $('#searchBtn').onclick = runSearch;
 $('#searchInput').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); runSearch(); } });
 document.addEventListener('keydown', e => { if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); $('#searchInput').focus(); } });
 $$('.nav-item').forEach(btn => btn.addEventListener('click', () => showView(btn.dataset.view)));
-$('#mobileMenu').onclick = () => $('.sidebar').classList.toggle('open');
+$('#mobileMenu').onclick = toggleSidebar;
+$('#sidebarScrim').onclick = closeSidebar;
 $('#uploadBtn').onclick = () => $('#fileInput').click();
 $('#fileInput').onchange = e => handleImport(e.target.files);
 $('#manageBtn').onclick = () => { isManageMode = !isManageMode; $('#manageBtn').textContent = isManageMode ? '完成管理' : '管理曲库'; renderTracks(); };
-$('#playMixBtn').onclick = () => { visibleTracks = [...tracks]; playQueue = visibleTracks; selectTrack(tracks[0]); };
-$('#randomBtn').onclick = () => selectTrack(visibleTracks[Math.floor(Math.random()*visibleTracks.length)] || tracks[0]);
 $('#mainPlayBtn').onclick = togglePlay;
-$('#prevBtn').onclick = () => selectTrack(playQueue[(currentIndex - 1 + playQueue.length) % playQueue.length] || activeTrack);
-$('#nextBtn').onclick = () => selectTrack(playQueue[(currentIndex + 1) % playQueue.length] || activeTrack);
+$('#prevBtn').onclick = () => playQueue.length ? selectTrack(playQueue[(currentIndex - 1 + playQueue.length) % playQueue.length]) : toast('播放队列还是空的');
+$('#nextBtn').onclick = () => playQueue.length ? selectTrack(playQueue[(currentIndex + 1) % playQueue.length]) : toast('播放队列还是空的');
 $('#playerFavorite').onclick = () => toggleFavorite(currentTrack());
 $('#downloadCurrent').onclick = () => downloadTrack(currentTrack());
 $('#lyricsBtn').onclick = () => $('#lyricsPanel').classList.add('open');
@@ -359,8 +369,8 @@ $('#sortBtn').onclick = () => { visibleTracks.reverse(); playQueue = visibleTrac
 $('#createPlaylistBtn').onclick = () => { $('#playlistModal').hidden = false; setTimeout(() => $('#playlistName').focus(), 50); };
 $('[data-close-modal]').onclick = () => $('#playlistModal').hidden = true;
 $('#savePlaylistBtn').onclick = () => { const name=$('#playlistName').value.trim(); if(!name) return toast('请先输入歌单名称'); state.playlists.push(name); saveState(); renderPlaylists(); $('#playlistModal').hidden=true; $('#playlistName').value=''; toast(`歌单「${name}」已创建`); };
-$('#playlistNav').addEventListener('click', e => { const b=e.target.closest('[data-playlist-name]'); if(b) toast(`已打开歌单「${b.dataset.playlistName}」`); });
-$('#collectionGrid').addEventListener('click', e => { const card=e.target.closest('[data-playlist]'); if(card) { selectTrack(tracks[card.classList.contains('mix-purple')?3:2]); toast(`正在播放「${card.dataset.playlist}」`); } });
+$('#playlistNav').addEventListener('click', e => { const b=e.target.closest('[data-playlist-name]'); if(b) { toast(`已打开歌单「${b.dataset.playlistName}」`); closeSidebar(); } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
 audio.addEventListener('timeupdate', updateProgress);
 audio.addEventListener('play', () => { isPlaying=true; updatePlayState(); });
 audio.addEventListener('pause', () => { isPlaying=false; updatePlayState(); });
@@ -371,4 +381,4 @@ audio.addEventListener('error', () => {
   toast('这个音频资源暂时不可用，请换一个版本');
 });
 
-renderWave(); renderPlaylists(); renderTracks(); selectTrack(tracks[0], false);
+renderPlaylists(); renderTracks();
