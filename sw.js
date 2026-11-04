@@ -1,4 +1,4 @@
-const CACHE_NAME = 'suiwoting-shell-v20';
+const CACHE_NAME = 'suiwoting-shell-v21';
 const APP_SHELL = [
   './',
   './index.html',

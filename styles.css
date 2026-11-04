@@ -602,3 +602,19 @@ button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{ou
 }
 @keyframes cd-rotate{to{transform:rotate(360deg)}}
 @media(prefers-reduced-motion:reduce){.cover-large{animation:none!important}}
+
+/* Keep downloading available in song lists and in the full-screen player. */
+.lyrics-download{display:none}
+.clear-cache-btn{display:flex;align-items:center;gap:12px;width:100%;min-height:44px;margin-top:auto;padding:0 14px;border:0;border-radius:10px;background:transparent;color:#96969c;font:inherit;font-size:13px;text-align:left}
+.clear-cache-btn .icon{width:17px;height:17px}
+.clear-cache-btn:hover,.clear-cache-btn:active{background:#1b1b1e;color:#fff}
+@media(max-width:700px){
+  .track-row{grid-template-columns:minmax(0,1fr) 176px}
+  .track-actions .download-btn{display:grid!important;color:#e9e9ed}
+  .track-actions .download-btn.completed{color:#75c998}
+  .manage-mode .track-actions .download-btn{display:none!important}
+  .lyrics-download{position:absolute;top:calc(14px + env(safe-area-inset-top));right:68px;display:flex;align-items:center;justify-content:center;gap:5px;min-width:70px;height:44px;padding:0 10px;border:0;border-radius:999px;background:rgba(255,255,255,.09);color:#fff;font-size:12px;font-weight:650;backdrop-filter:blur(16px)}
+  .lyrics-download .icon{width:18px;height:18px}
+  .lyrics-download:active{transform:scale(.92);background:rgba(255,255,255,.18)}
+}
+@media(max-width:380px){.track-row{grid-template-columns:minmax(0,1fr) 160px}.track-actions button,.track-actions .play-track-btn{width:40px;min-width:40px}}

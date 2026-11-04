@@ -725,6 +725,17 @@ function syncCurrentFavorite() {
   }
 }
 
+window.__nativeDownloadResult = (filename, error) => {
+  const entry = Object.entries(state.downloadRecords).find(([, record]) => record.filename === filename && record.status === 'downloading');
+  if (!entry) return;
+  const [id, record] = entry;
+  state.downloadRecords[id] = error
+    ? {...record, status:'failed', progress:0, error}
+    : {...record, status:'completed', progress:100, completedAt:Date.now(), error:''};
+  saveState(); renderTracks(visibleTracks);
+  toast(error ? `下载保存失败：${error}` : `已保存到“文件”App：${filename}`);
+};
+
 async function downloadTrack(track) {
   if (!track) return toast('请先选择一首歌曲');
   if (track.webdav && !webdavToken) return toast('请先重新连接网盘');
@@ -785,6 +796,11 @@ async function downloadTrack(track) {
     a.href = objectUrl; a.download = filename; a.rel = 'noopener';
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(objectUrl), 60000);
+    if (IS_NATIVE_APP && !window.suiwotingDesktop) {
+      state.downloadRecords[id] = {...state.downloadRecords[id], progress:100, size:blob.size};
+      saveState(); renderTracks(visibleTracks); toast('已开始保存到“文件”App…');
+      return;
+    }
     state.downloadRecords[id] = {...state.downloadRecords[id], status:'completed', progress:100, size:blob.size, completedAt:Date.now(), error:''};
     saveState(); renderTracks(visibleTracks); toast(`下载完成：${track.title}`);
   } catch (error) {
@@ -1211,6 +1227,13 @@ $('#cloudDirectories').addEventListener('click', event => {
   if (folder) loadCloudDirectory(folder.dataset.cloudPath);
 });
 $('#mobileMenu').onclick = toggleSidebar;
+$('#clearCacheBtn').onclick = async () => {
+  if ('caches' in window) await Promise.all((await caches.keys()).map(key => caches.delete(key)));
+  if (window.suiwotingDesktop?.clearCache) await window.suiwotingDesktop.clearCache();
+  else if (window.webkit?.messageHandlers?.clearCache) window.webkit.messageHandlers.clearCache.postMessage(null);
+  closeSidebar();
+  toast('缓存已清理；收藏、歌单和下载记录已保留');
+};
 $('#sidebarScrim').onclick = closeSidebar;
 $('#uploadBtn').onclick = () => $('#fileInput').click();
 $('#fileInput').onchange = e => handleImport(e.target.files);
@@ -1224,6 +1247,7 @@ $('#prevBtn').onclick = () => {
 $('#nextBtn').onclick = () => playQueue.length ? selectTrack(playQueue[(currentIndex + 1) % playQueue.length]) : toast('播放队列还是空的');
 $('#playerFavorite').onclick = () => toggleFavorite(currentTrack());
 $('#lyricsFavorite').onclick = () => toggleFavorite(currentTrack());
+$('#lyricsDownload').onclick = () => downloadTrack(currentTrack());
 $('#lyricArtistLink').onclick = () => searchArtist(currentTrack()?.artist);
 $('#downloadCurrent').onclick = () => downloadTrack(currentTrack());
 $('#lyricsBtn').onclick = () => $('#lyricsPanel').classList.contains('open') ? closeLyrics() : openLyrics();

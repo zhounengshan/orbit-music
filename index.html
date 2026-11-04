@@ -12,7 +12,7 @@
   <link rel="manifest" href="./manifest.webmanifest" />
   <link rel="apple-touch-icon" href="./assets/apple-touch-icon.png" />
   <link rel="icon" href="./assets/icon-192.png" />
-  <link rel="stylesheet" href="./styles.css?v=20" />
+  <link rel="stylesheet" href="./styles.css?v=21" />
 </head>
 <body>
   <svg class="icon-sprite" aria-hidden="true">
@@ -60,6 +60,7 @@
         <div class="playlist-heading"><span>歌单</span><button id="createPlaylistBtn" aria-label="新建歌单"><svg class="icon"><use href="#icon-plus"/></svg></button></div>
         <div class="playlist-nav" id="playlistNav"></div>
       </section>
+      <button class="clear-cache-btn" id="clearCacheBtn" type="button"><svg class="icon"><use href="#icon-close"/></svg><span>清理缓存</span></button>
     </aside>
     <button class="sidebar-scrim" id="sidebarScrim" aria-label="关闭菜单"></button>
 
@@ -146,6 +147,7 @@
     <aside class="lyrics-panel" id="lyricsPanel" aria-label="同步歌词" aria-hidden="true" inert>
       <button class="close-panel" id="closeLyrics" aria-label="收起歌词"><svg class="icon"><use href="#icon-chevron-down"/></svg></button>
       <button class="lyrics-favorite" id="lyricsFavorite" aria-label="收藏当前歌曲" aria-pressed="false"><svg class="icon"><use href="#icon-heart"/></svg></button>
+      <button class="lyrics-download" id="lyricsDownload" aria-label="下载当前歌曲"><svg class="icon"><use href="#icon-download"/></svg><span>下载</span></button>
       <div class="lyrics-top">
         <div class="cover-large" id="coverLarge"><span>Orbit</span></div>
         <h2 id="lyricTitle">尚未播放</h2>
@@ -232,7 +234,7 @@
     </form>
   </div>
   <audio id="audio" preload="metadata"></audio>
-  <script src="./app.js?v=13"></script>
+  <script src="./app.js?v=14"></script>
 </body>
 </html>
 
