@@ -2,14 +2,17 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#0a0a0b" />
-  <meta name="description" content="Orbit Music — 搜索、播放、收藏与同步歌词，一个干净的私人音乐空间。" />
-  <title>ORBIT MUSIC · 私人音乐空间</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="./styles.css?v=20261019-search-first" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="description" content="随我听 — 搜索、播放、收藏、歌单与同步歌词。" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <meta name="apple-mobile-web-app-title" content="随我听" />
+  <title>随我听</title>
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="./assets/apple-touch-icon.png" />
+  <link rel="icon" href="./assets/icon-192.png" />
+  <link rel="stylesheet" href="./styles.css?v=20" />
 </head>
 <body>
   <svg class="icon-sprite" aria-hidden="true">
@@ -18,6 +21,7 @@
     <symbol id="icon-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="m14.8 9.2-2 5.6-5.6 2 2-5.6 5.6-2Z"/></symbol>
     <symbol id="icon-library" viewBox="0 0 24 24"><path d="M5 4v16M10 4v16M15 6v14M19 5l2 14"/></symbol>
     <symbol id="icon-heart" viewBox="0 0 24 24"><path d="M20.8 5.8a5.2 5.2 0 0 0-7.4 0L12 7.2l-1.4-1.4a5.2 5.2 0 0 0-7.4 7.4L12 22l8.8-8.8a5.2 5.2 0 0 0 0-7.4Z"/></symbol>
+    <symbol id="icon-palette" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18h1.2a2 2 0 0 0 1.6-3.2 1.9 1.9 0 0 1 1.5-3.1h1.2A3.5 3.5 0 0 0 21 11.2 8.8 8.8 0 0 0 12 3Z"/><circle cx="7.5" cy="11" r=".8"/><circle cx="10" cy="7" r=".8"/><circle cx="15" cy="7.5" r=".8"/></symbol>
     <symbol id="icon-download" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M4 20h16"/></symbol>
     <symbol id="icon-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
     <symbol id="icon-play" viewBox="0 0 24 24"><path class="icon-fill" d="m8 5 11 7-11 7V5Z"/></symbol>
@@ -30,84 +34,138 @@
     <symbol id="icon-volume" viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4V5Zm4.5 4.5a4 4 0 0 1 0 5m2.5-8a8 8 0 0 1 0 11"/></symbol>
     <symbol id="icon-lyrics" viewBox="0 0 24 24"><path d="M5 6h14M5 10h10M5 14h14M5 18h8"/></symbol>
     <symbol id="icon-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+    <symbol id="icon-check" viewBox="0 0 24 24"><path d="m5 12 4.2 4.2L19 6.5"/></symbol>
+    <symbol id="icon-cloud" viewBox="0 0 24 24"><path d="M7.5 18.5h10a4 4 0 0 0 .6-7.9A6.5 6.5 0 0 0 5.7 9.1 4.8 4.8 0 0 0 7.5 18.5Z"/></symbol>
+    <symbol id="icon-folder" viewBox="0 0 24 24"><path d="M3.5 6.5h6l2 2h9v10h-17v-12Z"/></symbol>
+    <symbol id="icon-chevron-up" viewBox="0 0 24 24"><path d="m6.5 14.5 5.5-5 5.5 5"/></symbol>
+    <symbol id="icon-chevron-down" viewBox="0 0 24 24"><path d="m6.5 9.5 5.5 5 5.5-5"/></symbol>
   </svg>
-  <div class="shell">
+
+  <div class="app-shell">
     <aside class="sidebar" id="sidebar" aria-label="主导航">
-      <a class="brand" href="#" aria-label="Orbit Music 首页">
-        <span class="brand-mark"><i></i><i></i><i></i></span>
-        <span>ORBIT<span> MUSIC</span></span>
+      <a class="brand" href="#" aria-label="随我听首页">
+        <img src="./assets/icon-192.png" alt="" />
+        <span>随我听</span>
       </a>
 
       <nav class="nav-list">
         <button class="nav-item active" data-view="discover"><svg class="icon"><use href="#icon-compass"/></svg><span>搜索音乐</span></button>
         <button class="nav-item" data-view="library"><svg class="icon"><use href="#icon-library"/></svg><span>我的曲库</span><b id="libraryCount">0</b></button>
         <button class="nav-item" data-view="favorites"><svg class="icon"><use href="#icon-heart"/></svg><span>我的收藏</span><b id="favoriteCount">0</b></button>
+        <button class="nav-item" data-view="cloud"><svg class="icon"><use href="#icon-cloud"/></svg><span>我的网盘</span><b id="cloudStatus">未连</b></button>
         <button class="nav-item" data-view="downloads"><svg class="icon"><use href="#icon-download"/></svg><span>下载记录</span><b id="downloadCount">0</b></button>
       </nav>
 
-      <div class="side-label">我的歌单</div>
-      <div class="playlist-nav" id="playlistNav"></div>
-      <button class="create-playlist" id="createPlaylistBtn"><svg class="icon"><use href="#icon-plus"/></svg>新建歌单</button>
-      <p class="sidebar-note">你的收藏与歌单只保存在当前浏览器。</p>
+      <section class="playlist-section">
+        <div class="playlist-heading"><span>歌单</span><button id="createPlaylistBtn" aria-label="新建歌单"><svg class="icon"><use href="#icon-plus"/></svg></button></div>
+        <div class="playlist-nav" id="playlistNav"></div>
+      </section>
     </aside>
     <button class="sidebar-scrim" id="sidebarScrim" aria-label="关闭菜单"></button>
 
     <main class="main">
       <header class="topbar">
-        <button class="mobile-menu" id="mobileMenu" aria-label="打开菜单" aria-controls="sidebar" aria-expanded="false"><svg class="icon"><use href="#icon-menu"/></svg></button>
+        <button class="mobile-menu" id="mobileMenu" aria-label="打开资料库与歌单" aria-controls="sidebar" aria-expanded="false"><svg class="icon"><use href="#icon-list"/></svg></button>
+        <a class="topbar-brand" href="#" aria-label="随我听首页">
+          <img src="./assets/icon-192.png" alt="" />
+          <span>随我听</span>
+        </a>
         <label class="search-box">
-          <svg class="icon search-icon"><use href="#icon-search"/></svg>
-          <input id="searchInput" type="search" aria-label="搜索歌曲、艺人、专辑或链接" placeholder="搜索歌曲、艺人、专辑或链接" autocomplete="off" />
+          <svg class="icon"><use href="#icon-search"/></svg>
+          <input id="searchInput" type="search" aria-label="搜索歌曲、艺人或专辑" placeholder="搜索歌曲、艺人或专辑" autocomplete="off" />
           <kbd>⌘ K</kbd>
-          <button type="button" id="searchBtn" aria-label="搜索"><span>搜索</span><svg class="icon"><use href="#icon-search"/></svg></button>
+          <button type="button" id="searchBtn" aria-label="搜索"><span>搜索</span></button>
         </label>
-        <div class="source-switch" aria-label="音乐来源">
-          <span>聚合源</span>
+        <div class="source-switch">
+          <label for="sourceSelect">来源</label>
           <select id="sourceSelect">
-            <option value="all">全部来源</option>
+            <option value="all">全部</option>
             <option value="wyy">网易云</option>
             <option value="kuwo">酷我</option>
           </select>
         </div>
-        <button class="round-btn" id="uploadBtn" aria-label="导入本地歌曲"><svg class="icon"><use href="#icon-plus"/></svg></button>
+        <button class="import-button" id="uploadBtn" aria-label="导入本地音乐"><svg class="icon"><use href="#icon-plus"/></svg><span>导入</span></button>
         <input type="file" id="fileInput" accept="audio/*" multiple hidden />
-        <button class="avatar" aria-label="个人设置">ZS</button>
       </header>
 
-      <div class="content" id="content">
-        <section class="section-block">
+      <div class="content">
+        <section class="music-view">
           <div class="section-head">
             <div><h1 id="sectionTitle">搜索音乐</h1><p id="sectionSubtitle">输入歌曲、艺人或专辑名称，结果会显示在这里。</p></div>
-            <div class="view-actions">
-              <button id="sortBtn">最近添加 ↕</button>
-              <button id="manageBtn">管理曲库</button>
-            </div>
+            <div class="view-actions"><button id="sortBtn">最近添加</button><button id="manageBtn">管理曲库</button></div>
           </div>
+          <section class="home-discovery" id="homeDiscovery" aria-label="音乐分类">
+            <div class="home-heading"><span>DISCOVER · 发现</span><h2>听你想听的。</h2><p>熟悉的旋律，和下一首惊喜。</p></div>
+            <button class="home-feature" id="homeFeature" type="button" aria-label="开始聆听">
+              <div class="home-feature-copy"><span id="homeFeatureLabel">为你开启</span><strong id="homeFeatureTitle">好音乐，从这里开始。</strong><small id="homeFeatureArtist">选一首喜欢的歌，马上开听</small><b>播放音乐 <span aria-hidden="true">↗</span></b></div>
+              <img id="homeFeatureCover" src="./assets/icon-512.png" alt="" />
+            </button>
+            <div class="home-category-heading"><h3>按心情探索</h3><span>选一种风格</span></div>
+            <div class="home-categories">
+              <button class="category-card category-pop" data-category="流行音乐"><img class="category-art" alt="" /><span class="card-kicker">NOW PLAYING</span><strong>流行音乐</strong><em>当下热门 <b>↗</b></em></button>
+              <button class="category-card category-classic" data-category="经典老歌"><img class="category-art" alt="" /><span class="card-kicker">TIMELESS</span><strong>经典老歌</strong><em>重温好时光 <b>↗</b></em></button>
+              <button class="category-card category-dj" data-category="DJ热曲"><img class="category-art" alt="" /><span class="card-kicker">TURN IT UP</span><strong>DJ热曲</strong><em>节奏不停 <b>↗</b></em></button>
+              <button class="category-card category-loved" data-category="favorites"><img class="category-art" alt="" /><span class="card-kicker">JUST FOR YOU</span><strong>我爱听</strong><em>我的收藏 <b>♥</b></em></button>
+              <button class="category-card category-children" data-category="快乐儿歌"><img class="category-art" alt="" /><span class="card-kicker">LITTLE JOY</span><strong>快乐儿歌</strong><em>一起唱起来 <b>↗</b></em></button>
+              <button class="category-card category-red" data-category="红歌"><img class="category-art" alt="" /><span class="card-kicker">CLASSIC VOICES</span><strong>红歌摇篮</strong><em>重听时代旋律 <b>↗</b></em></button>
+            </div>
+            <div class="search-history" id="searchHistory" hidden><div class="history-heading"><h2>最近搜索</h2><button id="clearSearchHistory" type="button">清空</button></div><div class="history-chips" id="historyChips"></div></div>
+          </section>
+          <section class="cloud-panel" id="cloudPanel" hidden>
+            <div class="cloud-setup" id="cloudSetup">
+              <div class="cloud-mark"><svg class="icon"><use href="#icon-cloud"/></svg></div>
+              <div><strong>连接 AList / WebDAV</strong><p>挂载百度网盘、夸克、阿里云盘、OneDrive 或 NAS，直接播放网盘音乐。</p></div>
+              <button type="button" id="openCloudSettings">连接网盘</button>
+            </div>
+            <div class="cloud-browser" id="cloudBrowser" hidden>
+              <div class="cloud-toolbar">
+                <button type="button" id="cloudBackBtn" aria-label="返回上级目录">←</button>
+                <div><span>当前位置</span><strong id="cloudPath">/</strong></div>
+                <button type="button" id="cloudRefreshBtn">刷新</button>
+                <button type="button" id="cloudSettingsBtn">设置</button>
+              </div>
+              <div class="cloud-directories" id="cloudDirectories"></div>
+            </div>
+          </section>
+          <div class="table-head" aria-hidden="true"><span></span><span>歌曲</span><span>专辑</span><span>音质</span><span>时长</span><span></span></div>
           <div class="track-table" id="trackTable"></div>
-          <div class="empty-state" id="emptyState" hidden>
-            <svg class="empty-icon"><use href="#icon-search"/></svg><h3>从一首歌开始</h3><p>使用上方搜索框，或导入保存在本机的音频。</p>
+          <div class="search-pagination" id="searchPagination" hidden>
+            <button type="button" id="loadMoreBtn">加载更多</button>
+            <span id="searchProgress" role="status"></span>
+          </div>
+          <div class="empty-state" id="emptyState">
+            <div class="empty-mark"><svg class="icon"><use href="#icon-search"/></svg></div>
+            <h2>从一首歌开始</h2>
+            <p>搜索想听的歌曲，或从设备导入音频。</p>
+            <button id="emptyActionBtn">开始搜索</button>
           </div>
         </section>
       </div>
     </main>
 
     <aside class="lyrics-panel" id="lyricsPanel" aria-label="同步歌词" aria-hidden="true" inert>
-      <button class="close-panel" id="closeLyrics" aria-label="关闭歌词"><svg class="icon"><use href="#icon-close"/></svg></button>
+      <button class="close-panel" id="closeLyrics" aria-label="收起歌词"><svg class="icon"><use href="#icon-chevron-down"/></svg></button>
+      <button class="lyrics-favorite" id="lyricsFavorite" aria-label="收藏当前歌曲" aria-pressed="false"><svg class="icon"><use href="#icon-heart"/></svg></button>
       <div class="lyrics-top">
-        <span class="playing-label"><i></i>正在播放</span>
-        <div class="cover-large" id="coverLarge"><span>ORBIT</span></div>
+        <div class="cover-large" id="coverLarge"><span>Orbit</span></div>
         <h2 id="lyricTitle">尚未播放</h2>
-        <p id="lyricArtist">搜索一首歌开始聆听</p>
+        <p id="lyricArtist"><button id="lyricArtistLink" type="button">歌手</button><span id="lyricAlbum"> · 专辑</span></p>
       </div>
-      <div class="lyrics-scroll" id="lyricsScroll"></div>
+      <div class="lyrics-scroll" id="lyricsScroll"><p class="lyric-line active">歌词会随着播放自动滚动</p></div>
+      <div class="expanded-player" aria-label="播放控制">
+        <div class="expanded-time"><span id="expandedCurrentTime">00:00</span><span id="expandedDuration">00:00</span></div>
+        <input id="expandedProgress" type="range" min="0" max="100" value="0" aria-label="播放进度" />
+        <div class="expanded-transport"><button id="expandedRepeat" aria-label="单曲循环" aria-pressed="false"><svg class="icon"><use href="#icon-repeat"/></svg></button><button id="expandedPrev" aria-label="上一首"><svg class="icon"><use href="#icon-prev"/></svg></button><button id="expandedPlay" class="expanded-play" aria-label="播放"><svg class="icon"><use href="#icon-play"/></svg></button><button id="expandedNext" aria-label="下一首"><svg class="icon"><use href="#icon-next"/></svg></button><button id="lyricColorBtn" aria-label="切换歌词颜色"><svg class="icon"><use href="#icon-palette"/></svg></button></div>
+        <span class="color-hint" id="lyricColorHint">歌词颜色：暖白</span>
+      </div>
       <button class="lyric-mode" id="lyricModeBtn">译文 · 开</button>
     </aside>
   </div>
 
   <footer class="player" id="player">
     <div class="now-track">
-      <div class="mini-cover" id="miniCover"><span>ORBIT</span></div>
-      <div><strong id="playerTitle">尚未播放</strong><span id="playerArtist">搜索一首歌开始聆听</span></div>
+      <div class="mini-cover" id="miniCover"><span>O</span></div>
+      <div class="now-copy" role="button" tabindex="0" aria-label="打开正在播放与歌词"><strong id="playerTitle">尚未播放</strong><span id="playerArtist">搜索一首歌开始聆听</span></div>
       <button class="icon-btn favorite-player" id="playerFavorite" aria-label="收藏当前歌曲"><svg class="icon"><use href="#icon-heart"/></svg></button>
     </div>
     <div class="transport">
@@ -118,30 +176,63 @@
         <button id="nextBtn" aria-label="下一首"><svg class="icon"><use href="#icon-next"/></svg></button>
         <button id="repeatBtn" aria-label="循环播放"><svg class="icon"><use href="#icon-repeat"/></svg></button>
       </div>
-      <div class="progress-row">
-        <span id="currentTime">00:00</span>
-        <input id="progress" type="range" min="0" max="100" value="0" aria-label="播放进度" />
-        <span id="duration">00:32</span>
-      </div>
+      <div class="progress-row"><span id="currentTime">00:00</span><input id="progress" type="range" min="0" max="100" value="0" aria-label="播放进度" /><span id="duration">00:00</span></div>
     </div>
     <div class="player-tools">
-      <button id="lyricsBtn" class="lyrics-button" aria-label="查看歌词" aria-controls="lyricsPanel" aria-expanded="false"><svg class="icon"><use href="#icon-lyrics"/></svg><span>歌词</span></button>
+      <button id="lyricsBtn" class="lyrics-button" aria-label="查看歌词" aria-controls="lyricsPanel" aria-expanded="false"><svg class="icon"><use href="#icon-lyrics"/></svg><span>歌词</span><b class="lyrics-glyph" aria-hidden="true">词</b></button>
       <button id="queueBtn" aria-label="播放队列"><svg class="icon"><use href="#icon-list"/></svg></button>
       <svg class="icon volume-icon"><use href="#icon-volume"/></svg><input id="volume" type="range" min="0" max="100" value="75" aria-label="音量" />
       <button id="downloadCurrent" aria-label="下载当前歌曲"><svg class="icon"><use href="#icon-download"/></svg></button>
     </div>
   </footer>
 
+  <nav class="mobile-nav" aria-label="手机主导航">
+    <button class="mobile-nav-btn active" data-view="discover"><svg class="icon"><use href="#icon-compass"/></svg><span>首页</span></button>
+    <button class="mobile-nav-btn" data-view="library"><svg class="icon"><use href="#icon-library"/></svg><span>曲库</span></button>
+    <button class="mobile-nav-btn" data-view="favorites"><svg class="icon"><use href="#icon-heart"/></svg><span>收藏</span></button>
+    <button class="mobile-nav-btn" data-view="cloud"><svg class="icon"><use href="#icon-cloud"/></svg><span>网盘</span></button>
+    <button class="mobile-nav-btn" data-view="downloads"><svg class="icon"><use href="#icon-download"/></svg><span>下载</span></button>
+  </nav>
+
+  <button class="queue-scrim" id="queueScrim" aria-label="关闭播放队列"></button>
+  <aside class="queue-panel" id="queuePanel" aria-label="播放队列" aria-hidden="true" inert>
+    <button class="queue-grabber" id="queueGrabber" aria-label="收起播放队列"><span></span></button>
+    <header class="queue-head">
+      <div><h2>接下来播放</h2><p id="queueSummary">0 首歌曲</p></div>
+      <div class="queue-head-actions"><button id="clearQueueBtn">清空</button><button id="closeQueueBtn" aria-label="关闭播放队列"><svg class="icon"><use href="#icon-close"/></svg></button></div>
+    </header>
+    <div class="queue-list" id="queueList"></div>
+    <div class="queue-empty" id="queueEmpty"><svg class="icon"><use href="#icon-list"/></svg><strong>播放队列是空的</strong><span>点击歌曲右侧的 + 加入队列</span></div>
+  </aside>
+
   <div class="toast" id="toast" role="status"></div>
   <div class="modal" id="playlistModal" role="dialog" aria-modal="true" aria-labelledby="playlistModalTitle" hidden>
     <div class="modal-card">
       <button class="modal-close" data-close-modal aria-label="关闭"><svg class="icon"><use href="#icon-close"/></svg></button>
       <h2 id="playlistModalTitle">新建歌单</h2>
-      <label>歌单名称<input id="playlistName" maxlength="18" placeholder="例如：凌晨三点" /></label>
+      <label>歌单名称<input id="playlistName" maxlength="18" placeholder="例如：深夜通勤" /></label>
       <button class="primary-btn" id="savePlaylistBtn">创建歌单</button>
     </div>
   </div>
+  <div class="modal" id="cloudModal" role="dialog" aria-modal="true" aria-labelledby="cloudModalTitle" hidden>
+    <form class="modal-card cloud-form" id="cloudForm">
+      <button class="modal-close" type="button" id="closeCloudModal" aria-label="关闭"><svg class="icon"><use href="#icon-close"/></svg></button>
+      <h2 id="cloudModalTitle">连接网盘</h2>
+      <p class="cloud-form-note">支持 AList、群晖、Nextcloud 等 WebDAV 服务。建议使用应用专用密码。</p>
+      <label>WebDAV 地址<input id="cloudBaseUrl" type="url" inputmode="url" autocomplete="url" placeholder="https://example.com/dav/" required /></label>
+      <div class="cloud-form-grid">
+        <label>账号<input id="cloudUsername" autocomplete="username" placeholder="账号" /></label>
+        <label>应用密码<input id="cloudPassword" type="password" autocomplete="current-password" placeholder="应用专用密码" required /></label>
+      </div>
+      <label>起始目录<input id="cloudRootPath" value="/" placeholder="/音乐" /></label>
+      <label class="cloud-remember"><input id="cloudRemember" type="checkbox" />仅在这台设备保存应用密码</label>
+      <p class="cloud-security">账号密码只通过 HTTPS 发送，用于建立临时连接，不写入服务器磁盘。</p>
+      <button class="primary-btn" id="connectCloudBtn" type="submit">连接并浏览</button>
+      <button class="secondary-btn" id="disconnectCloudBtn" type="button" hidden>断开网盘</button>
+    </form>
+  </div>
   <audio id="audio" preload="metadata"></audio>
-  <script src="./app.js?v=20261019-search-first"></script>
+  <script src="./app.js?v=13"></script>
 </body>
 </html>
+
