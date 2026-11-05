@@ -761,16 +761,29 @@ async function downloadTrack(track) {
       url = track.localUrl || getSynthUrl(track); extension = track.localUrl ? 'mp3' : 'wav';
     }
 
-    const filename = `${track.artist} - ${track.title}.${extension}`;
+    let filename = `${track.artist} - ${track.title}.${extension}`;
     state.downloadRecords[id] = {...state.downloadRecords[id], status:'downloading', progress:0, filename};
     saveState(); renderTracks(visibleTracks);
     if (track.remote && IS_NATIVE_APP && !window.suiwotingDesktop && window.webkit?.messageHandlers?.directDownload) {
-      const direct = await api('/api/url', {platform:track.platform, songid:track.sourceId, format:extension, bitrate:track.minfo?.find(item => item.format === extension)?.bitrate, time:track.time, sign:track.sign});
-      const directUrl = direct.data?.url;
-      if (!/^https:\/\//i.test(directUrl || '')) throw new Error('音频直连地址不可用');
-      window.webkit.messageHandlers.directDownload.postMessage({url:directUrl, filename});
-      toast('手机正在直连音源下载…');
-      return;
+      const tryCandidates = async candidates => {
+        for (const candidate of candidates) {
+          try {
+            const direct = await api('/api/url', {platform:candidate.platform, songid:candidate.sourceId, format:candidate.format, bitrate:candidate.bitrate, time:candidate.time, sign:candidate.sign});
+            const directUrl = direct.data?.url;
+            if (!/^https:\/\//i.test(directUrl || '')) continue;
+            filename = `${track.artist} - ${track.title}.${candidate.format || 'mp3'}`;
+            state.downloadRecords[id] = {...state.downloadRecords[id], filename};
+            saveState(); renderTracks(visibleTracks);
+            window.webkit.messageHandlers.directDownload.postMessage({url:directUrl, filename});
+            toast(candidate.platform === track.platform ? '手机正在直连音源下载…' : '已切换备用音源下载…');
+            return true;
+          } catch (_) { /* Try another quality or source. */ }
+        }
+        return false;
+      };
+      if (await tryCandidates(playbackCandidates(track))) return;
+      if (await tryCandidates(await loadAlternateCandidates(track))) return;
+      throw new Error('当前音源不可下载，请稍后重试');
     }
     const response = await fetch(url);
     if (!response.ok) throw new Error(`下载失败（${response.status}）`);
