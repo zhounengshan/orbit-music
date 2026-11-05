@@ -725,13 +725,13 @@ function syncCurrentFavorite() {
   }
 }
 
-window.__nativeDownloadResult = (filename, error) => {
+window.__nativeDownloadResult = (filename, error, size = 0) => {
   const entry = Object.entries(state.downloadRecords).find(([, record]) => record.filename === filename && record.status === 'downloading');
   if (!entry) return;
   const [id, record] = entry;
   state.downloadRecords[id] = error
     ? {...record, status:'failed', progress:0, error}
-    : {...record, status:'completed', progress:100, completedAt:Date.now(), error:''};
+    : {...record, status:'completed', progress:100, size:size || record.size || 0, completedAt:Date.now(), error:''};
   saveState(); renderTracks(visibleTracks);
   toast(error ? `下载保存失败：${error}` : `已保存到“文件”App：${filename}`);
 };
@@ -764,6 +764,14 @@ async function downloadTrack(track) {
     const filename = `${track.artist} - ${track.title}.${extension}`;
     state.downloadRecords[id] = {...state.downloadRecords[id], status:'downloading', progress:0, filename};
     saveState(); renderTracks(visibleTracks);
+    if (track.remote && IS_NATIVE_APP && !window.suiwotingDesktop && window.webkit?.messageHandlers?.directDownload) {
+      const direct = await api('/api/url', {platform:track.platform, songid:track.sourceId, format:extension, bitrate:track.minfo?.find(item => item.format === extension)?.bitrate, time:track.time, sign:track.sign});
+      const directUrl = direct.data?.url;
+      if (!/^https:\/\//i.test(directUrl || '')) throw new Error('音频直连地址不可用');
+      window.webkit.messageHandlers.directDownload.postMessage({url:directUrl, filename});
+      toast('手机正在直连音源下载…');
+      return;
+    }
     const response = await fetch(url);
     if (!response.ok) throw new Error(`下载失败（${response.status}）`);
     const total = Number(response.headers.get('content-length')) || 0;
@@ -955,7 +963,8 @@ function normalizeRemote(item, fallbackPlatform, index) {
   const platform = item._platform || fallbackPlatform || 'kuwo';
   const minfo = Array.isArray(item.minfo) ? item.minfo : [];
   const best = minfo.find(x => x.format === 'flac') || minfo.find(x => String(x.bitrate) === '320') || minfo[0];
-  return {id:`${platform}:${item.id}`, sourceId:String(item.id), platform, remote:true, title:item.name||'未知歌曲', artist:item.artist||'未知艺人', album:item.album_name||'未知专辑', cover:item.pic_url||'', duration:Number(item.duration)||0, quality:best?.format==='flac'?'FLAC':best?.bitrate?`${best.bitrate}K`:'MP3', minfo, time:item.time, sign:item.sign, color:index%6};
+  const cover = String(item.pic_url || '').replace(/^http:\/\//i, 'https://');
+  return {id:`${platform}:${item.id}`, sourceId:String(item.id), platform, remote:true, title:item.name||'未知歌曲', artist:item.artist||'未知艺人', album:item.album_name||'未知专辑', cover, duration:Number(item.duration)||0, quality:best?.format==='flac'?'FLAC':best?.bitrate?`${best.bitrate}K`:'MP3', minfo, time:item.time, sign:item.sign, color:index%6};
 }
 
 function favoriteWithArtwork() {
@@ -993,7 +1002,7 @@ async function loadHomeArtwork() {
     {selector:'.category-pop', keyword:'流行歌曲'},
     {selector:'.category-classic', keyword:'经典老歌'},
     {selector:'.category-dj', keyword:'DJ热曲'},
-    {selector:'.category-children', keyword:'快乐儿歌'},
+    {selector:'.category-children', keyword:'儿歌'},
     {selector:'.category-red', keyword:'红歌'}
   ];
   await Promise.allSettled(categories.map(async ({selector, keyword}) => {
